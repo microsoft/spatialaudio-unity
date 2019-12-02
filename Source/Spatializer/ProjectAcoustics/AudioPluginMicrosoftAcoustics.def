@@ -1,0 +1,7 @@
+LIBRARY
+EXPORTS
+    Spatializer_SetTritonHandle
+    Spatializer_SetAceFileLoaded
+    Spatializer_SetTransforms
+    Spatializer_GetDebugInfo
+    Spatializer_FreeDebugInfo

@@ -1,0 +1,6 @@
+[submodule "Source/External/Wil"]
+	path = Source/External/Wil
+	url = https://github.com/microsoft/wil
+[submodule "Source/External/googletest"]
+	path = Source/External/googletest
+	url = https://github.com/google/googletest

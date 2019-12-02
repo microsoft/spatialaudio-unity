@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Microsoft.SpatialAudio.Spatializer.Unity</id>
+    <version>$version$</version>
+    <authors>Microsoft Corporation</authors>
+    <owners>Microsoft,SpatialAudio</owners>
+    <!-- license type="expression">MIT</license -->
+    <licenseUrl>https://github.com/microsoft/MixedRealityToolkit-Unity/license.txt</licenseUrl>
+    <projectUrl>https://dev.azure.com/microsoft/Analog/_git/mixedreality.spatialaudio.unity</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Spatial audio with Windows Sonic</description>
+    <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+    <releaseNotes>FIXME: Release notes here</releaseNotes>
+    <tags>Unity HoloLens2 Audio Spatializer</tags>
+  </metadata>
+  <files>
+    <!-- Helper scripts for design control -->
+    <file src="Scripts\**" exclude="*.nuspec;*.nuspec.meta;*.props;*.props.meta;*.targets;*.targets.meta" target="Scripts\" />
+    <!-- Native spatializer plugin binaries -->
+    <file src="Plugins\**" target="Plugins\" />
+  </files>
+</package>

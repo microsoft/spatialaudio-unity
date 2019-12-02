@@ -23,6 +23,7 @@ ExportedObj/
 *.svd
 *.pdb
 *.opendb
+*.log
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -34,3 +35,9 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# No binaries
+*.dll
+
+# Ignore VS Code settings
+.vscode/launch.json

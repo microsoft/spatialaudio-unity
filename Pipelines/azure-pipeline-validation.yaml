@@ -1,0 +1,18 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Builds Microsoft.SpatialAudio.Unity binaries and packages
+
+trigger:
+- develop
+
+variables:
+  ProductMajorMinor: 0.1
+  ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
+  ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
+
+stages:
+- stage: Build_Source
+  displayName: Building All Flavors
+  jobs:
+  - template: Templates/Build.yaml

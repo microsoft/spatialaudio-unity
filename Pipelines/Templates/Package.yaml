@@ -1,0 +1,64 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+jobs:
+- job: Unity_Packaging
+  workspace:
+    clean: all
+  continueOnError: false
+  displayName: Generating Unity and NuGet Packages
+  pool:
+    name: Analog On-Prem
+    demands: Unity2019.1.10f1
+  variables:
+    unityLocation: ''
+  steps:
+  - script: echo Downloading Pipeline Artifacts
+  - checkout: self
+    submodules: true
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: 'BuildArtifacts'
+      buildType: 'current'
+      targetPath: '$(Pipeline.Workspace)'
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script:
+        $info = (Get-UnitySetupInstance | Select-UnitySetupInstance -Version $(UnityVersion)).Path + "\Editor";
+        Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
+  - task: PowerShell@2
+    name: SetVersionTag
+    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+    inputs:
+      targetType: 'inline'
+      script:
+        Write-Output "##vso[task.setvariable variable=ProductVersion;]$(ProductVersion)"
+  - script: python tools\unity_package.py -u "$(unityLocation)" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(ProductVersion)
+    displayName: Building Unity Package
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Unity Package to Fileshare'
+    inputs:
+      PathtoPublish: '$(Pipeline.Workspace)\unity'
+      ArtifactName: IsacPlugin
+      publishLocation: FilePath
+      TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
+      Parallel: true
+  - script: python tools\nuget_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\nuget" -v $(ProductVersion)
+    displayName: Building NuGet Package
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish NuGet Package to Fileshare'
+    inputs:
+      PathtoPublish: '$(Pipeline.Workspace)\nuget'
+      ArtifactName: IsacPlugin
+      publishLocation: FilePath
+      TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
+      Parallel: true
+  - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
+    displayName: 'Publish to Internal Nuget Feed'
+    condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')))
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '8115054f-1c74-4928-a9ab-de4769e7d6ae/6453195d-832c-4e86-a45c-faa5dad9631e'
