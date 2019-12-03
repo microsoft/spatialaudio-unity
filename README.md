@@ -20,8 +20,14 @@ This repository provides plugins and tools for integrating spatial audio and aco
 
 If you forget to include submodules when cloning, add them with `git submodule update --init --recursive`
 
-### Build
+### Build Status
+| Build | Branch | Status |
+| :----:| :----: | :----: |
+| Release | [master](https://github.com/microsoft/spatialaudio-unity/tree/master) | [![Release Build Status](https://dev.azure.com/microsoft/Analog/_apis/build/status/mixedreality/spatialaudio/unity/microsoft.spatialaudio-unity?branchName=develop)](https://dev.azure.com/microsoft/Analog/_build/latest?definitionId=46637&branchName=develop) |
+| Validation | [develop](https://github.com/microsoft/spatialaudio-unity/tree/develop) | [![Validation Build Status](https://dev.azure.com/ms/spatialaudio-unity/_apis/build/status/microsoft.spatialaudio-unity?branchName=develop)](https://dev.azure.com/ms/spatialaudio-unity/_build/latest?definitionId=304&branchName=develop) |
 
+
+### Local Build
 - Launch "Developer Command Prompt for Visual Studio 2019".
 - Switch directory to the root of your Git enlistment.
 - Run the CMake script to generate Visual Studio 2019 projects:
@@ -34,6 +40,6 @@ If you forget to include submodules when cloning, add them with `git submodule u
   `python3 Tools\nuget_package.py -v 0.1.0`
 
 ### Artifacts
-- Build produces both Unity Asset Package and a NuGetPackage.
+- Build produces a NuGet package and a Unity asset package.
 - Official Unity and NuGet packages are under [releases tab](https://github.com/microsoft/spatialaudio-unity/releases)
 - NuGet package is also released to [NuGet](https://nuget.org).
