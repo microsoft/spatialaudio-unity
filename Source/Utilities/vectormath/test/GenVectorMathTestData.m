@@ -1,3 +1,6 @@
+% Copyright (c) Microsoft Corporation. All rights reserved.
+% Licensed under the MIT License.
+
 function GenVectorMathTestData
 
     order = 1024;

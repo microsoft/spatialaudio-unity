@@ -1,3 +1,4 @@
+<!-- Copyright (c) Microsoft Corporation. All rights reserved.Licensed under the MIT License. -->
 <?xml version="1.0" encoding="utf-8" ?>
 <SignConfigXML>
   <!-- Binaries with the same filename need to be put into different jobs -->
