@@ -69,4 +69,4 @@ jobs:
       command: 'push'
       packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
       nuGetFeedType: 'external'
-      publishVstsFeed: '$(NugetFeedId)'
+      publishFeedCredentials: '$(NugetFeedId)'
