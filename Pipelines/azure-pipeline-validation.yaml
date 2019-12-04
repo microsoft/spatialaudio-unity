@@ -7,9 +7,7 @@ trigger:
 - develop
 
 variables:
-  ProductMajorMinor: 0.1
-  ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
-  ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
+- template: Templates/Variables.yaml
 
 stages:
 - stage: Build_Source
