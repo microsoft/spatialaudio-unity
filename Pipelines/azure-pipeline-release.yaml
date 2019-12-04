@@ -1,0 +1,26 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Builds Microsoft.SpatialAudio.Unity binaries and packages
+
+trigger:
+- master
+- develop
+
+variables:
+- template: Templates/Variables.yaml
+
+stages:
+- stage: Build_Source
+  displayName: Building All Flavors
+  jobs:
+  - template: Templates/Build.yaml
+- stage: Sign_Binaries
+  dependsOn:
+    - Build_Source
+  jobs:
+  - template: Templates/Sign.yaml
+- stage: Packaging
+  dependsOn: Sign_Binaries
+  jobs:
+  - template: Templates/Package.yaml

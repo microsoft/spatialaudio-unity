@@ -1,0 +1,54 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+jobs:
+- job: Consolidate_Artifacts
+  continueOnError: false
+  steps:
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      buildType: 'current'
+      targetPath: '$(Pipeline.Workspace)\BuildArtifacts'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Consolidated Build Artifacts'
+    inputs:
+      PathtoPublish: '$(Pipeline.Workspace)\BuildArtifacts'
+      ArtifactName: 'BuildArtifacts'
+
+- job: CodeSign_Binaries
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+  dependsOn: Consolidate_Artifacts
+  continueOnError: false
+  pool:
+    name: Package ES Lab E
+  displayName: Signing Binaries
+  steps:
+  - script: echo Syncing Source
+  - checkout: self
+    submodules: true
+  - script: echo Downloading Pipeline Artifacts
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: 'BuildArtifacts'
+      buildType: 'current'
+      targetPath: '$(Pipeline.Workspace)\BuildArtifacts'
+  - task: ComponentGovernanceComponentDetection@0
+    displayName: Component Governance
+    inputs:
+      scanType: 'Register'
+      verbosity: 'Verbose'
+      alertWarningLevel: 'High'
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign Binaries - ''SigningBranch'' only'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(Build.SourcesDirectory)\Tools\SignConfig.xml'
+      signTimeOut: 360
+      inPathRoot: '$(Pipeline.Workspace)\BuildArtifacts'
+      outPathRoot: '$(Pipeline.Workspace)\BuildArtifacts'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Consolidated and Signed Artifacts'
+    inputs:
+      PathtoPublish: '$(Pipeline.Workspace)\BuildArtifacts'
+      ArtifactName: 'BuildArtifacts'
