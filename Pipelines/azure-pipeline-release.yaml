@@ -8,7 +8,6 @@ trigger:
 - develop
 
 variables:
-  FileShareDropPath: $(InternalFileShare)
   ProductMajorMinor: 0.1
   SigningBranch: master
   UnityVersion: 'Unity2019.1.10f1'
