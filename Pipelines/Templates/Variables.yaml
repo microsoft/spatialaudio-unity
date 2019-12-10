@@ -1,6 +1,6 @@
 variables:
     ProductMajorMinor: 0.9
-    SigningBranch: NugetFixes
+    SigningBranch: master
     UnityVersion: 'Unity2019.1.10f1'
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
