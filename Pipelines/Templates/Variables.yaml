@@ -1,5 +1,5 @@
 variables:
-    ProductMajorMinor: 0.9
+    ProductMajorMinor: 1.0
     SigningBranch: master
     UnityVersion: 'Unity2019.1.10f1'
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
