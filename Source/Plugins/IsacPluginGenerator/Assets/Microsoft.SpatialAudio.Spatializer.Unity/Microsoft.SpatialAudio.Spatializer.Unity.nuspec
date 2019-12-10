@@ -3,7 +3,7 @@
   <metadata>
     <id>Microsoft.SpatialAudio.Spatializer.Unity</id>
     <version>$version$</version>
-    <authors>Microsoft Corporation</authors>
+    <authors>Microsoft</authors>
     <owners>Microsoft,SpatialAudio</owners>
     <licenseUrl>https://github.com/microsoft/spatialaudio-unity/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/microsoft/spatialaudio-unity</projectUrl>
