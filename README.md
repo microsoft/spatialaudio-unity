@@ -1,3 +1,5 @@
+[![Licensed under the MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/microsoft/spatialaudio-unity/blob/master/LICENSE)
+
 # Introduction 
 This repository provides plugins and tools for integrating spatial audio and acoustics into your Unity 3D applications and games. This includes:
 - A HoloLens 2 spatializer plugin which uses Windows Sonic API to enable hardware offload of spatial audio processing, freeing up the CPU for your application.
@@ -23,7 +25,7 @@ If you forget to include submodules when cloning, add them with `git submodule u
 ### Build Status
 | Build | Branch | Status |
 | :----:| :----: | :----: |
-| Release | [master](https://github.com/microsoft/spatialaudio-unity/tree/master) | [![Release Build Status](https://dev.azure.com/microsoft/Analog/_apis/build/status/mixedreality/spatialaudio/unity/microsoft.spatialaudio-unity?branchName=develop)](https://dev.azure.com/microsoft/Analog/_build/latest?definitionId=46637&branchName=develop) |
+| Release | [master](https://github.com/microsoft/spatialaudio-unity/tree/master) | [![Release Build Status](https://dev.azure.com/microsoft/Analog/_apis/build/status/mixedreality/spatialaudio/unity/microsoft.spatialaudio-unity?branchName=master)](https://dev.azure.com/microsoft/Analog/_build/latest?definitionId=46637&branchName=master) |
 | Validation | [develop](https://github.com/microsoft/spatialaudio-unity/tree/develop) | [![Validation Build Status](https://dev.azure.com/ms/spatialaudio-unity/_apis/build/status/microsoft.spatialaudio-unity?branchName=develop)](https://dev.azure.com/ms/spatialaudio-unity/_build/latest?definitionId=304&branchName=develop) |
 
 
