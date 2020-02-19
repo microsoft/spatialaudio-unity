@@ -2,11 +2,14 @@
 
 # Introduction 
 This repository provides plugins and tools for integrating spatial audio and acoustics into your Unity 3D applications and games. This includes:
-- A HoloLens 2 spatializer plugin which uses Windows Sonic API to enable hardware offload of spatial audio processing, freeing up the CPU for your application.
+- A HoloLens 2 spatializer plugin which uses [Windows Sonic API](https://docs.microsoft.com/en-us/windows/win32/coreaudio/spatial-sound) to enable hardware offload of spatial audio processing, freeing up the CPU for your application.
 - A sample Unity application that demonstrates proper usage of the HoloLens 2 spatializer plugin.
-- Source code for the Project Acoustics spatializer plugin.
+- Source code for the [Project Acoustics](http://aka.ms/acoustics) spatializer plugin.
 
-### Required Software
+# Getting started with Spatial Audio for Unity on HoloLens 2
+Cloning this repository is not required to start using the Microsoft Spatializer in your Unity project. Visit our [documentation](https://docs.microsoft.com/en-us/windows/mixed-reality/spatial-sound-in-unity) for instructions on integrating the Microsoft Spatializer into your Unity project. For a more in-depth exploration of spatial audio, check out the [learning module](https://docs.microsoft.com/en-us/windows/mixed-reality/unity-spatial-audio-ch1). If you'd like to build the plugin yourself, see below.
+
+## Required Software
 
 | ![Windows Logo](Documentation/Images/128px_Windows_logo.png)<br>[Windows SDK 18362+](https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk) | ![VS Logo](Documentation/Images/128px_Visual_Studio_2019.png)<br>[Visual Studio 2019](https://visualstudio.microsoft.com/vs/) | ![CMake Logo](Documentation/Images/128px_CMake_logo.png)<br>[CMake](https://cmake.org/) | ![Unity3D logo](Documentation/Images/128px_Official_unity_logo.png)<br>[Unity 2019](https://unity.com/releases/2019-2?_ga=2.114950222.898171561.1571681098-1938809356.1563129846) | ![Python Logo](Documentation/Images/128pv_python_logo.png)<br>[Python 3+](https://www.python.org/downloads/) |
 | :---: | :---: | :---: | :---: | :---: |
