@@ -61,26 +61,21 @@ def main():
     if args.version:
         product_version_cmake = "-DPRODUCT_VERSION=" + args.version
 
+    windows_win32_cmake = [generator_vs2019, "-A Win32", product_version_cmake]
+    windows_x64_cmake = [generator_vs2019, "-A x64", product_version_cmake]
+    windows_arm_cmake[:0] = [generator_vs2019, "-A ARM", product_version_cmake]
+    windows_arm64_cmake[:0] = [generator_vs2019, "-A ARM64", product_version_cmake]
+
     if (cmake_windows):
-        cmake_options = [generator_vs2019, product_version_cmake]
-        cmake_x64_options = [generator_vs2019, "-A x64", product_version_cmake]
-        windows_arm_cmake[:0] = cmake_options
-        windows_arm64_cmake[:0] = cmake_options
-        create_build_folder_for_platform_architecture(build_dir, "Windows", "x86", cmake_options, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "Windows", "x64", cmake_x64_options, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Windows", "x86", windows_win32_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Windows", "x64", windows_x64_cmake, cmake_tests, git_root)
         create_build_folder_for_platform_architecture(build_dir, "Windows", "arm", windows_arm_cmake, cmake_tests, git_root)
         create_build_folder_for_platform_architecture(build_dir, "Windows", "arm64", windows_arm64_cmake, cmake_tests, git_root)
     if (cmake_windowsstore):
-        cmake_options = [generator_vs2019, product_version_cmake]
-        cmake_x64_options = [generator_vs2019, "-A x64", product_version_cmake]
-        windowsstore_x86_cmake[:0] = cmake_options
-        windowsstore_x64_cmake[:0] = cmake_x64_options
-        windowsstore_arm_cmake[:0] = cmake_options
-        windowsstore_arm64_cmake[:0] = cmake_options
-        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "x86", windowsstore_x86_cmake, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "x64", windowsstore_x64_cmake, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "ARM", windowsstore_arm_cmake, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "ARM64", windowsstore_arm64_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "x86", windows_win32_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "x64", windows_x64_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "ARM", windows_arm_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "ARM64", windows_arm64_cmake, cmake_tests, git_root)
 
 def create_build_folder_for_platform_architecture(build_dir, system, arch, cmake_options, cmake_tests, git_root):
     folder = oshelpers.fixpath(build_dir, system, arch)

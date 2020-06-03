@@ -4,7 +4,14 @@
 # Builds Microsoft.SpatialAudio.Unity binaries and packages
 
 trigger:
-- develop
+  branches:
+    include:
+    - develop
+  paths:
+    include:
+    - Source/*
+    - Tools/*
+    - Pipelines/*
 
 variables:
 - template: Templates/Variables.yaml

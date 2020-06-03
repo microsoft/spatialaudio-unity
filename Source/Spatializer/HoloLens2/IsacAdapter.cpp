@@ -28,6 +28,8 @@ bool IsacAdapter::AreEnoughSamplesBuffered(uint32_t bufferedSamples, uint32_t re
     }
 }
 
+// Warning about the device change lambda not having a virtual dtor is OK to ignore
+#pragma warning(disable : 5205)
 IsacAdapter::IsacAdapter() : m_IsPlaying(false), m_IsActivated(false), m_IsacEventsSinceLastUnityTick(0)
 {
     // Subscribe to device change notifications so we can reactivate later
@@ -37,6 +39,7 @@ IsacAdapter::IsacAdapter() : m_IsPlaying(false), m_IsActivated(false), m_IsacEve
     };
     m_DeviceChangeToken = MediaDevice::DefaultAudioRenderDeviceChanged(deviceChangeHandler);
 }
+#pragma warning(default : 5205)
 
 IsacAdapter::~IsacAdapter()
 {
