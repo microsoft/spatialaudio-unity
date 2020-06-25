@@ -5,6 +5,7 @@
 #include <cstring>
 #include "wil/result_macros.h"
 #include "mathutility.h"
+#include <winrt/Windows.Foundation.h>
 
 using namespace Microsoft::WRL;
 using namespace winrt::Windows::Media::Devices;
