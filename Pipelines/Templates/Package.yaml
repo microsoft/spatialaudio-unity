@@ -71,6 +71,11 @@ jobs:
       publishLocation: FilePath
       TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
       Parallel: true
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish NPM Package to Build Artifacts'
+    inputs:
+      PathtoPublish: '$(Pipeline.Workspace)\npm'
+      ArtifactName: 'NpmPackage'
 
 - job: Publish_Nuget_Packages
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
