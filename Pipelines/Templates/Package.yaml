@@ -61,7 +61,6 @@ jobs:
       ArtifactName: 'NugetPackage'
   - task: NodeTool@0
     displayName: 'Install NPM Tools'
-    inputs:
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -v $(ProductVersion)
       displayName: Creating NPM Package
   - task: PublishBuildArtifacts@1
