@@ -19,6 +19,7 @@ def main():
     parser.add_argument("-s", "--stage", help="Copies built spatializer binaries from passed artifacts directory to Unity project locations", type=str.lower)
     parser.add_argument("-o", "--output", help="Output location, will use default build/npm location if unspecified", type=str.lower)
     parser.add_argument("-v", "--version", help="Semantic version string for the package", type=str.lower)
+    parser.add_argument("-p", "--publish", help="Publish the package to NPM feed", action='store_true')
     args = parser.parse_args()
 
     # Copy plugin binaries to project location
@@ -41,7 +42,11 @@ def main():
     npm_package_full_path = oshelpers.fixpath(npm_package_location, constants.spatializer_plugin_name + "." + args.version)
     # Specify the package version before packing
     result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
-    result = subprocess.run(["cmd", "/c", "npm pack"], cwd=unity_project_full_path)
+    if args.publish:
+        npm_command = ["cmd", "/c", "npm publish"]
+    else:
+        npm_command = ["cmd", "/c", "npm pack"]
+    result = subprocess.run(npm_command, cwd=unity_project_full_path)
     if (result.returncode != 0):
         print("Package generation failed!")
         print(result.stdout)
