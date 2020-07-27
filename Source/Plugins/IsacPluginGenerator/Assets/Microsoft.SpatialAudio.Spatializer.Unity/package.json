@@ -1,7 +1,7 @@
 {
   "name": "com.microsoft.spatialaudio.spatializer.unity",
   "displayName": "Microsoft Spatializer",
-  "version": "1.0.18",
+  "version": "%version%",
   "unity": "2018.4",
   "description": "Audio Spatializer for Mixed Reality",
   "keywords": [
