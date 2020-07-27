@@ -61,7 +61,7 @@ jobs:
       ArtifactName: 'NugetPackage'
   - task: NodeTool@0
     displayName: 'Install NPM Tools'
-  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -v $(ProductVersion)
+  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Creating NPM Package
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
