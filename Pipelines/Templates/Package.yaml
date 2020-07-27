@@ -62,7 +62,7 @@ jobs:
   - task: NodeTool@0
     displayName: 'Install NPM Tools'
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -v $(ProductVersion)
-      displayName: Creating NPM Package
+    displayName: Creating NPM Package
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
     inputs:
