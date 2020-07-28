@@ -63,6 +63,10 @@ jobs:
     displayName: 'Install NPM Tools'
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
     displayName: Build and publish NPM Package
+  - task: npmAuthenticate@0
+    displayName: NPM Authenticate
+    inputs:
+      workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
     inputs:
