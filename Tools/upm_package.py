@@ -45,6 +45,7 @@ def main():
     if args.publish:
         npm_command = ["cmd", "/c", "npm publish"]
     else:
+        local_copy = True
         npm_command = ["cmd", "/c", "npm pack"]
     result = subprocess.run(npm_command, cwd=unity_project_full_path)
     if (result.returncode != 0):
@@ -52,8 +53,11 @@ def main():
         print(result.stdout)
         print(result.stderr)
     else:
-        shutil.move(oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz"), npm_package_location)
-        print("Package successfully generated: " + npm_package_full_path)
+        if local_copy:
+            shutil.move(oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz"), npm_package_location)
+            print("Package successfully generated: " + npm_package_full_path)
+        else:
+            print("Package successfully published")
 
 if __name__ == '__main__':
     main()

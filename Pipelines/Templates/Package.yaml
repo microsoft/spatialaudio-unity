@@ -67,19 +67,6 @@ jobs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
     displayName: Build and publish NPM Package
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish NPM Package to Fileshare'
-    inputs:
-      PathtoPublish: '$(Pipeline.Workspace)\npm'
-      ArtifactName: IsacPlugin
-      publishLocation: FilePath
-      TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
-      Parallel: true
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish NPM Package to Build Artifacts'
-    inputs:
-      PathtoPublish: '$(Pipeline.Workspace)\npm'
-      ArtifactName: 'NpmPackage'
 
 - job: Publish_Nuget_Packages
   condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
