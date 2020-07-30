@@ -43,7 +43,7 @@ If you forget to include submodules when cloning, add them with `git submodule u
   `python3 Tools\unity_package.py -u "c:\Program Files\Unity\Hub\Editor\2019.1.3f1\Editor" -v 0.1.0`
 - To generate the NuGet package:
   `python3 Tools\nuget_package.py -v 0.1.0`
-- To generate the NPM package:
+- To generate the UPM package:
   `python3 Tools\upm_package.py -v 0.1.0`
 
 ### Artifacts
