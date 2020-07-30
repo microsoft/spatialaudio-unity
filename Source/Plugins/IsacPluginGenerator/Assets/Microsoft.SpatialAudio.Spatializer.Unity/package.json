@@ -3,7 +3,7 @@
   "displayName": "Microsoft Spatializer",
   "version": "%version%",
   "unity": "2018.4",
-  "description": "Audio Spatializer for Mixed Reality",
+  "description": "Audio Spatializer for HoloLens and Windows Mixed Reality applications",
   "keywords": [
     "microsoft",
     "mixed",
