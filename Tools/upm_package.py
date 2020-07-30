@@ -42,6 +42,7 @@ def main():
     npm_package_full_path = oshelpers.fixpath(npm_package_location, constants.spatializer_plugin_name + "." + args.version)
     # Specify the package version before packing
     result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
+    local_copy = False
     if args.publish:
         npm_command = ["cmd", "/c", "npm publish"]
     else:
