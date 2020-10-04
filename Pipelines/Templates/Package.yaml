@@ -92,7 +92,7 @@ jobs:
   - task: CmdLine@2
     displayName: Publish an interanl NPM package
     inputs:
-      script: copy $(Pipeline.Workspace)\Tools\InternalFeed.npmrc $(Pipeline.Workspace)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+      script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Pipeline.Workspace)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: npmAuthenticate@0
     displayName: NPM Authenticate
     inputs:
