@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 jobs:
+- environment: 'SpatialAudio-Unity Release Approval'
 - job: Publish_Nuget_Packages
   continueOnError: false
   pool:

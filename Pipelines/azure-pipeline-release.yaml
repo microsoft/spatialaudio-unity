@@ -34,5 +34,4 @@ stages:
 - stage: Publishing
   dependson: Packaging
   jobs:
-  - environment: 'SpatialAudio-Unity Release Approval'
   - template: Templates/Publish.yaml
