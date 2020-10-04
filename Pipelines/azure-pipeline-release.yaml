@@ -31,3 +31,8 @@ stages:
   dependsOn: Sign_Binaries
   jobs:
   - template: Templates/Package.yaml
+- stage: Publishing
+  dependson: Packaging
+  jobs:
+  - environment: 'SpatialAudio-Unity Release Approval'
+  - template: Templates/Publish.yaml

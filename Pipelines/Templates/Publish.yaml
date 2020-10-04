@@ -1,0 +1,71 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+jobs:
+- job: Publish_Nuget_Packages
+  continueOnError: false
+  pool:
+    name: Package ES Lab E
+  displayName: Publishing NuGet Package
+  steps:
+  - script: echo Syncing Source
+  - checkout: self
+    submodules: true
+  - script: echo Downloading Pipeline Artifacts
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: 'NugetPackage'
+      buildType: 'current'
+      targetPath: '$(Pipeline.Workspace)\nuget'
+  - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
+    displayName: 'Publish to Internal Nuget Feed'
+    condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')))
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '8115054f-1c74-4928-a9ab-de4769e7d6ae/6453195d-832c-4e86-a45c-faa5dad9631e'
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign NuGet Package - ''SigningBranch'' only'
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(Build.SourcesDirectory)\Tools\Nuget.SignConfig.xml'
+      signTimeOut: 360
+      inPathRoot: '$(Pipeline.Workspace)\nuget'
+      outPathRoot: '$(Pipeline.Workspace)\nuget'
+  - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
+    displayName: 'Push to Nuget.org'
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
+      nuGetFeedType: 'external'
+      publishFeedCredentials: '$(NugetFeedId)'
+
+- job: Publish_NPM_Packages
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+  continueOnError: false
+  pool:
+    name: Package ES Lab E
+  displayName: Publishing NPM Package
+  steps:
+  - script: echo Syncing Source
+  - checkout: self
+    submodules: true
+  - script: echo Downloading Pipeline Artifacts
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifactName: 'NpmPackage'
+      buildType: 'current'
+      targetPath: '$(Pipeline.Workspace)\npm'
+  - task: Npm@1
+    inputs:
+      command: publish
+      publishRegistry: useFeed
+      publishFeed: 'Analog/MixedReality-UPM-Internal'
+      workingDir: '$(Pipeline.Workspace)\npm'
+#  - script: npm publish "$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz"
+#    displayName: Build NPM Package
+
