@@ -21,14 +21,6 @@ jobs:
             artifactName: 'NugetPackage'
             buildType: 'current'
             targetPath: '$(Pipeline.Workspace)\nuget'
-        - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
-          displayName: 'Publish to Internal Nuget Feed'
-          condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')))
-          inputs:
-            command: 'push'
-            packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
-            nuGetFeedType: 'internal'
-            publishVstsFeed: '8115054f-1c74-4928-a9ab-de4769e7d6ae/6453195d-832c-4e86-a45c-faa5dad9631e'
         - task: PkgESCodeSign@10
           displayName: 'CodeSign NuGet Package - ''SigningBranch'' only'
           condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
@@ -56,13 +48,6 @@ jobs:
             artifactName: 'NpmPackage'
             buildType: 'current'
             targetPath: '$(Pipeline.Workspace)\npm'
-        - task: Npm@1
-          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-          inputs:
-            command: publish
-            publishRegistry: useFeed
-            publishFeed: 'Analog/MixedReality-UPM-Internal'
-            workingDir: '$(Pipeline.Workspace)\npm'
       #  - script: npm publish "$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz"
       #    displayName: Build NPM Package
 
