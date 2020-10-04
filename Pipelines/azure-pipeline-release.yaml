@@ -32,6 +32,6 @@ stages:
   jobs:
   - template: Templates/Package.yaml
 - stage: Publishing
-  dependson: Packaging
+  dependsOn: Packaging
   jobs:
   - template: Templates/Publish.yaml
