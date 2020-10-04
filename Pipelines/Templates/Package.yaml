@@ -90,7 +90,7 @@ jobs:
       command: publish
       publishRegistry: useFeed
       publishFeed: https://microsoft.pkgs.visualstudio.com/Analog/_packaging/MixedReality-UPM-Internal/npm/registry/
-      workingDir: '$(Pipeline.Workspace)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\'
+      workingDir: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Build Artifacts'
     inputs:
