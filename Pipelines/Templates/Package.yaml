@@ -97,11 +97,6 @@ jobs:
     displayName: NPM Authenticate
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
-  - task: Npm@1
-    displayName: Publishing to internal test feed
-    condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))
-    inputs:
-      command: publish
-      customRegistry: useNpmrc
-      workingDir: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity
+  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
+    displayName: Publish NPM Package to Internal Feed
 
