@@ -88,8 +88,8 @@ jobs:
     condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))
     inputs:
       command: publish
-      publishRegistry: useFeed
-      publishFeed: https://microsoft.pkgs.visualstudio.com/Analog/_packaging/MixedReality-UPM-Internal/npm/registry/
+      customRegistry: useFeed
+      customFeed: https://microsoft.pkgs.visualstudio.com/Analog/_packaging/MixedReality-UPM-Internal/npm/registry/
       workingDir: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Build Artifacts'
