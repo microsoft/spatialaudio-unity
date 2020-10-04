@@ -83,18 +83,25 @@ jobs:
       publishLocation: FilePath
       TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
       Parallel: true
-  - task: Npm@1
-    displayName: Publishing to internal test feed
-    condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))
-    inputs:
-      command: publish
-      customRegistry: useFeed
-      customFeed: https://microsoft.pkgs.visualstudio.com/Analog/_packaging/MixedReality-UPM-Internal/npm/registry/
-      workingDir: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Build Artifacts'
     inputs:
       PathtoPublish: '$(Pipeline.Workspace)\npm'
       ArtifactName: 'NpmPackage'
   - powershell: Test-Path '$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz'
+  - task: CmdLine@2
+    displayName: Publish an interanl NPM package
+    inputs:
+      script: copy $(Pipeline.Workspace)\Tools\InternalFeed.npmrc $(Pipeline.Workspace)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+  - task: npmAuthenticate@0
+    displayName: NPM Authenticate
+    inputs:
+      workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+  - task: Npm@1
+    displayName: Publishing to internal test feed
+    condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))
+    inputs:
+      command: publish
+      customRegistry: useNpmrc
+      workingDir: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity
 
