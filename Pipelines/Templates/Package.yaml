@@ -74,7 +74,7 @@ jobs:
     inputs:
       script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: npmAuthenticate@0
-    displayName: NPM Authenticate
+    displayName: Internal NPM Feed Authentication
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
@@ -84,7 +84,7 @@ jobs:
     inputs:
       script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: npmAuthenticate@0
-    displayName: NPM Authenticate
+    displayName: Public NPM Feed Authentication
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
       customEndpoint: 'aipmr MixedReality-Unity-Packages'
@@ -94,6 +94,7 @@ jobs:
   - script: npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run
     workingDirectory: $(Pipeline.Workspace)\npm\
     displayName: Dry run publish public NPM Package
+    errorActionPreference: continue
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
     inputs:
