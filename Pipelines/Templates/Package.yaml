@@ -82,7 +82,7 @@ jobs:
   - task: CmdLine@2
     displayName: Copy .npmrc for Public Feed
     inputs:
-      script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+      script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: npmAuthenticate@0
     displayName: NPM Authenticate
     inputs:
