@@ -94,7 +94,7 @@ jobs:
   - script: npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run
     workingDirectory: $(Pipeline.Workspace)\npm\
     displayName: Dry run publish public NPM Package
-    errorActionPreference: continue
+    continueOnError: 'true'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
     inputs:
