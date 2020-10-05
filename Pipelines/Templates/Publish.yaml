@@ -15,7 +15,7 @@ jobs:
         - script: echo Syncing Source
         - checkout: self
           submodules: true
-        - script: echo Downloading Pipeline Artifacts
+        - script: echo Downloading Nuget Artifacts
         - task: DownloadPipelineArtifact@2
           inputs:
             artifactName: 'NugetPackage'
@@ -39,15 +39,12 @@ jobs:
             packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
             nuGetFeedType: 'external'
             publishFeedCredentials: '$(NugetFeedId)'
-        - script: echo Syncing Source
-        - checkout: self
-          submodules: true
-        - script: echo Downloading Pipeline Artifacts
+        - script: echo Downloading NPM Artifacts
         - task: DownloadPipelineArtifact@2
           inputs:
             artifactName: 'NpmPackage'
             buildType: 'current'
             targetPath: '$(Pipeline.Workspace)\npm'
-      #  - script: npm publish "$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz"
-      #    displayName: Build NPM Package
+        - script: npm publish "$(Pipeline.Workspace)\npm\**.tgz"
+          displayName: Publish NPM Package to Public Feed
 
