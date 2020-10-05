@@ -87,7 +87,7 @@ jobs:
     displayName: NPM Authenticate
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
-      customEndpoint: 'AIMPR Feeds SC'
+      customEndpoint: 'aipmr MixedReality-Unity-Packages'
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
   - task: PublishBuildArtifacts@1
