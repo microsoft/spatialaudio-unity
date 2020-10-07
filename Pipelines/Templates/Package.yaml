@@ -93,7 +93,7 @@ jobs:
   - powershell: Test-Path '$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz'
   - script: |
       npm adduser
-      npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run
+      npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run --verbose
     workingDirectory: $(Pipeline.Workspace)\npm\
     displayName: Dry run publish public NPM Package
     continueOnError: 'true'
