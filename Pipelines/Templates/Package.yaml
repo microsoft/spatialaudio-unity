@@ -83,6 +83,9 @@ jobs:
     displayName: Copy .npmrc for Public Feed
     inputs:
       script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+  - script: |
+      npm install -g vsts-npm-auth
+      vsts-npm-auth -config $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: npmAuthenticate@0
     displayName: Public NPM Feed Authentication
     inputs:
