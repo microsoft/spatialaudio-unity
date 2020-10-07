@@ -91,8 +91,9 @@ jobs:
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
   - powershell: Test-Path '$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz'
-  - script: |
+  - script:
       npm adduser
+  - script:
       npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run --verbose
     workingDirectory: $(Pipeline.Workspace)\npm\
     displayName: Dry run publish public NPM Package
