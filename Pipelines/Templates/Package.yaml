@@ -90,14 +90,12 @@ jobs:
     displayName: Public NPM Feed Authentication
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
-      customEndpoint: 'aipmr MixedReality-Unity-Packages'
+      customEndpoint: 'AIPMR SC MixedReality-Unity-Packages'
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
-  - powershell: Test-Path '$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz'
-  - script:
-      npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run --verbose
-    workingDirectory: $(Pipeline.Workspace)\npm\
+  - script: npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run --verbose
     displayName: Dry run publish public NPM Package
+    workingDirectory: $(Pipeline.Workspace)\npm\
     continueOnError: 'true'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
