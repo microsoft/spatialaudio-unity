@@ -1,0 +1,17 @@
+{
+    "name": "Microsoft.SpatialAudio.Spatializer.Editor",
+    "references": [
+        "Microsoft.SpatialAudio.Spatializer"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
