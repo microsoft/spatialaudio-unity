@@ -4,3 +4,5 @@ App/
 WSATestCertificate.pfx*
 TextMesh Pro/
 TextMesh Pro.meta
+!DotNetZip.dll
+!NugetForUnity.dll
