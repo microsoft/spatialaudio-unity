@@ -45,6 +45,6 @@ jobs:
             artifactName: 'NpmPackage'
             buildType: 'current'
             targetPath: '$(Pipeline.Workspace)\npm'
-        - script: npm publish "$(Pipeline.Workspace)\npm\**.tgz"
+        - script: npm publish "$(Pipeline.Workspace)\npm\**.tgz" --dry-run --verbose
           displayName: Publish NPM Package to Public Feed
 
