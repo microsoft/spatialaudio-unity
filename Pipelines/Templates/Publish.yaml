@@ -40,13 +40,4 @@ jobs:
             packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
             nuGetFeedType: 'external'
             publishFeedCredentials: '$(NugetFeedId)'
-        - script: echo Downloading NPM Artifacts
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            artifactName: 'NpmPackage'
-            buildType: 'current'
-            targetPath: '$(Pipeline.Workspace)\npm'
-        - script: npm publish $(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz --dry-run --verbose
-          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-          displayName: Publish NPM Package to Public Feed
 
