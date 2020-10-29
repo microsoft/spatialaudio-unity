@@ -90,7 +90,7 @@ jobs:
       customEndpoint: 'AIPMR SC MixedReality-Unity-Packages'
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
-    - task: PublishBuildArtifacts@1
+  - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
     inputs:
       PathtoPublish: '$(Pipeline.Workspace)\npm'
