@@ -31,3 +31,7 @@ stages:
   dependsOn: Sign_Binaries
   jobs:
   - template: Templates/Package.yaml
+- stage: Publishing
+  dependsOn: Packaging
+  jobs:
+  - template: Templates/Publish.yaml

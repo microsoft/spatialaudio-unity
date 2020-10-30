@@ -6,7 +6,7 @@ jobs:
   workspace:
     clean: all
   continueOnError: false
-  displayName: Generating Unity and NuGet Packages
+  displayName: Generating Unity, NuGet and NPM Packages
   pool:
     name: Analog On-Prem
     demands: Unity2019.1.10f1
@@ -40,7 +40,7 @@ jobs:
     displayName: 'Publish Unity Package to Fileshare'
     inputs:
       PathtoPublish: '$(Pipeline.Workspace)\unity'
-      ArtifactName: IsacPlugin
+      ArtifactName: IsacPluginUnity
       publishLocation: FilePath
       TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
       Parallel: true
@@ -50,10 +50,18 @@ jobs:
     displayName: 'Publish NuGet Package to Fileshare'
     inputs:
       PathtoPublish: '$(Pipeline.Workspace)\nuget'
-      ArtifactName: IsacPlugin
+      ArtifactName: IsacPluginNuget
       publishLocation: FilePath
       TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
       Parallel: true
+  - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
+    displayName: 'Publish to Internal Nuget Feed'
+    condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '8115054f-1c74-4928-a9ab-de4769e7d6ae/6453195d-832c-4e86-a45c-faa5dad9631e'
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NuGet Package to Build Artifacts'
     inputs:
@@ -61,53 +69,38 @@ jobs:
       ArtifactName: 'NugetPackage'
   - task: NodeTool@0
     displayName: 'Install NPM Tools'
+  - task: CmdLine@2
+    displayName: Copy .npmrc for Internal Feed
+    inputs:
+      script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: npmAuthenticate@0
-    displayName: NPM Authenticate
+    displayName: Internal NPM Feed Authentication
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
-    displayName: Build and publish NPM Package
+    displayName: Publish NPM Package to Internal Feed
+  - task: CmdLine@2
+    displayName: Copy .npmrc for Public Feed
+    inputs:
+      script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+  - task: npmAuthenticate@0
+    displayName: Public NPM Feed Authentication
+    inputs:
+      workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+      customEndpoint: 'AIPMR SC MixedReality-Unity-Packages'
+  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
+    displayName: Build Public NPM Package
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish NPM Package to Fileshare'
+    inputs:
+      PathtoPublish: '$(Pipeline.Workspace)\npm'
+      ArtifactName: IsacPluginNpm
+      publishLocation: FilePath
+      TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
+      Parallel: true
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish NPM Package to Build Artifacts'
+    inputs:
+      PathtoPublish: '$(Pipeline.Workspace)\npm'
+      ArtifactName: 'NpmPackage'
 
-- job: Publish_Nuget_Packages
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-  dependsOn: Unity_Packaging
-  continueOnError: false
-  pool:
-    name: Package ES Lab E
-  displayName: Signing and Publishing NuGet Package
-  steps:
-  - script: echo Syncing Source
-  - checkout: self
-    submodules: true
-  - script: echo Downloading Pipeline Artifacts
-  - task: DownloadPipelineArtifact@2
-    inputs:
-      artifactName: 'NugetPackage'
-      buildType: 'current'
-      targetPath: '$(Pipeline.Workspace)\nuget'
-  - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
-    displayName: 'Publish to Internal Nuget Feed'
-    condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop')))
-    inputs:
-      command: 'push'
-      packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: '8115054f-1c74-4928-a9ab-de4769e7d6ae/6453195d-832c-4e86-a45c-faa5dad9631e'
-  - task: PkgESCodeSign@10
-    displayName: 'CodeSign NuGet Package - ''SigningBranch'' only'
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-    env:
-      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-    inputs:
-      signConfigXml: '$(Build.SourcesDirectory)\Tools\Nuget.SignConfig.xml'
-      signTimeOut: 360
-      inPathRoot: '$(Pipeline.Workspace)\nuget'
-      outPathRoot: '$(Pipeline.Workspace)\nuget'
-  - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
-    displayName: 'Push to Nuget.org'
-    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-    inputs:
-      command: 'push'
-      packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
-      nuGetFeedType: 'external'
-      publishFeedCredentials: '$(NugetFeedId)'
