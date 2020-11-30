@@ -9,7 +9,7 @@ jobs:
   displayName: Generating Unity, NuGet and NPM Packages
   pool:
     name: Analog On-Prem
-    demands: $(UnityVersion)
+    demands: variables['UnityVersion']
   variables:
     unityLocation: ''
   steps:
