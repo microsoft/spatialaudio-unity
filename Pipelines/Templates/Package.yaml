@@ -9,7 +9,7 @@ jobs:
   displayName: Generating Unity, NuGet and NPM Packages
   pool:
     name: Analog On-Prem
-    demands: Unity2019.1.10f1
+    demands: Unity2019.4.8f1
   variables:
     unityLocation: ''
   steps:
