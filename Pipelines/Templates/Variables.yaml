@@ -1,6 +1,7 @@
 variables:
     ProductMajorMinor: 1.0
     SigningBranch: master
-    UnityVersion: 'Unity2019.1.10f1'
+    UnityVersion: 'Unity2019.4.8f1'
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
+    NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
