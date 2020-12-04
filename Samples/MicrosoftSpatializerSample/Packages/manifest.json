@@ -4,7 +4,8 @@
       "name": "Microsoft Mixed Reality",
       "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry/",
       "scopes": [
-        "com.microsoft.mixedreality"
+        "com.microsoft.mixedreality",
+        "com.microsoft.spatialaudio"
       ]
     }
   ],
