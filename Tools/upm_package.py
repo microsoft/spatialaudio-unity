@@ -20,11 +20,14 @@ def main():
     parser.add_argument("-o", "--output", help="Output location, will use default build/npm location if unspecified", type=str.lower)
     parser.add_argument("-v", "--version", help="Semantic version string for the package", type=str.lower)
     parser.add_argument("-p", "--publish", help="Publish the package to NPM feed", action='store_true')
+    parser.add_argument("-t", "--tarball", help="Publish specified tarball", type=str.lower)
+    parser.add_argument("-d", "--dryrun", help="Simulate publishing without pushing", action='store_true')
     args = parser.parse_args()
 
     # Copy plugin binaries to project location
     if not args.stage:
-        stage.stage_binaries()
+        if not args.tarball:
+            stage.stage_binaries()
     else:
         stage.stage_binaries(args.stage)
 
@@ -41,10 +44,15 @@ def main():
     unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir, "Assets", constants.spatializer_plugin_name)
     npm_package_full_path = oshelpers.fixpath(npm_package_location, constants.spatializer_plugin_name + "." + args.version)
     # Specify the package version before packing
-    result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
+    if args.version:
+        result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
     local_copy = False
     if args.publish:
         npm_command = ["cmd", "/c", "npm publish"]
+        if args.tarball:
+            npm_command = [npm_command, args.tarball]
+        if args.dryrun:
+            npm_command = [npm_command, "--dry-run"]
     else:
         local_copy = True
         npm_command = ["cmd", "/c", "npm pack"]
