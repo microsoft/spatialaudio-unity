@@ -24,49 +24,55 @@ def main():
     parser.add_argument("-d", "--dryrun", help="Simulate publishing without pushing", action='store_true')
     args = parser.parse_args()
 
-    # Copy plugin binaries to project location
-    if not args.stage:
-        if not args.tarball:
+    if not args.tarball:
+        # Copy plugin binaries to project location
+        if not args.stage:
             stage.stage_binaries()
-    else:
-        stage.stage_binaries(args.stage)
+        else:
+            stage.stage_binaries(args.stage)
 
-    git_root = oshelpers.fixpath(githelpers.get_root())
+        git_root = oshelpers.fixpath(githelpers.get_root())
 
-    # Default output path is under build/unity
-    npm_package_location = oshelpers.fixpath(git_root, constants.build_root, "npm")
-    if args.output:
-        npm_package_location = args.output
+        # Default output path is under build/unity
+        npm_package_location = oshelpers.fixpath(git_root, constants.build_root, "npm")
+        if args.output:
+            npm_package_location = args.output
 
-    if not os.path.isdir(npm_package_location):
-        os.mkdir(npm_package_location)
+        if not os.path.isdir(npm_package_location):
+            os.mkdir(npm_package_location)
 
-    unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir, "Assets", constants.spatializer_plugin_name)
-    npm_package_full_path = oshelpers.fixpath(npm_package_location, constants.spatializer_plugin_name + "." + args.version)
-    # Specify the package version before packing
-    if args.version:
+        unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir, "Assets", constants.spatializer_plugin_name)
+        npm_package_full_path = oshelpers.fixpath(npm_package_location, constants.spatializer_plugin_name + "." + args.version)
+        # Specify the package version before packing
         result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
-    local_copy = False
-    if args.publish:
-        npm_command = ["cmd", "/c", "npm publish"]
-        if args.tarball:
-            npm_command = [npm_command, args.tarball]
+        local_copy = False
+        if args.publish:
+            npm_command = ["cmd", "/c", "npm publish"]
+        else:
+            local_copy = True
+            npm_command = ["cmd", "/c", "npm pack"]
+        result = subprocess.run(npm_command, cwd=unity_project_full_path)
+        if (result.returncode != 0):
+            print("Package generation failed!")
+            print(result.stdout)
+            print(result.stderr)
+        else:
+            if local_copy:
+                shutil.move(oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz"), npm_package_location)
+                print("Package successfully generated: " + npm_package_full_path)
+            else:
+                print("Package successfully published")
+    else:
+        npm_command = ["cmd", "/c", "npm publish ", args.tarball]
         if args.dryrun:
             npm_command = [npm_command, "--dry-run"]
-    else:
-        local_copy = True
-        npm_command = ["cmd", "/c", "npm pack"]
-    result = subprocess.run(npm_command, cwd=unity_project_full_path)
-    if (result.returncode != 0):
-        print("Package generation failed!")
-        print(result.stdout)
-        print(result.stderr)
-    else:
-        if local_copy:
-            shutil.move(oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz"), npm_package_location)
-            print("Package successfully generated: " + npm_package_full_path)
+        result = subprocess.run(npm_command, cwd=unity_project_full_path)
+        if (result.returncode != 0):
+            print("Package generation failed!")
+            print(result.stdout)
+            print(result.stderr)
         else:
-            print("Package successfully published")
+            print("Published tarball!")
 
 if __name__ == '__main__':
     main()
