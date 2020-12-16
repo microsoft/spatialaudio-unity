@@ -42,7 +42,6 @@ def main():
             os.mkdir(npm_package_location)
 
         unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir, "Assets", constants.spatializer_plugin_name)
-        npm_package_full_path = oshelpers.fixpath(npm_package_location, constants.spatializer_plugin_name + "." + args.version)
         # Specify the package version before packing
         result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
         local_copy = False
@@ -58,14 +57,16 @@ def main():
             print(result.stderr)
         else:
             if local_copy:
-                shutil.move(oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz"), npm_package_location)
+                npm_package_full_path = oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz")
+                shutil.move(npm_package_full_path, npm_package_location)
                 print("Package successfully generated: " + npm_package_full_path)
             else:
                 print("Package successfully published")
     else:
-        npm_command = ["cmd", "/c", "npm publish ", args.tarball]
+        npm_command = ["cmd", "/c", "npm publish", args.tarball]
         if args.dryrun:
             npm_command = [npm_command, "--dry-run"]
+        print(npm_command)
         result = subprocess.run(npm_command, cwd=args.output)
         if (result.returncode != 0):
             print("Package generation failed!")
