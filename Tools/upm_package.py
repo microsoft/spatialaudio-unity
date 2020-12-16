@@ -63,11 +63,12 @@ def main():
             else:
                 print("Package successfully published")
     else:
-        npm_command = ["cmd", "/c", "npm publish", args.tarball]
-        if args.dryrun:
-            npm_command = [npm_command, "--dry-run"]
+        if not os.path.exists(args.tarball):
+            print("Can't find tarball " + args.tarball)
+            exit
+        npm_command = ["cmd", "/c", "npm publish", args.tarball, "--dry-run" if args.dryrun else ""]
         print(npm_command)
-        result = subprocess.run(npm_command, cwd=args.output)
+        result = subprocess.run(npm_command)
         if (result.returncode != 0):
             print("Package generation failed!")
             print(result.stdout)

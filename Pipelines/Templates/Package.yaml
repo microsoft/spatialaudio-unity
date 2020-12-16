@@ -90,7 +90,7 @@ jobs:
       customEndpoint: 'AIPMR SC MixedReality-Unity-Packages'
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
-  - script: python tools\upm_package.py -o "$(Pipeline.Workspace)\npm" -t "$(NpmPackageName)-$(ProductVersion).tgz" -d
+  - script: python tools\upm_package.py -t "$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz" -d
     displayName: Dry run publish public NPM Package
     continueOnError: 'false'
   - task: PublishBuildArtifacts@1
