@@ -66,7 +66,7 @@ def main():
         npm_command = ["cmd", "/c", "npm publish ", args.tarball]
         if args.dryrun:
             npm_command = [npm_command, "--dry-run"]
-        result = subprocess.run(npm_command, cwd=unity_project_full_path)
+        result = subprocess.run(npm_command, cwd=args.output)
         if (result.returncode != 0):
             print("Package generation failed!")
             print(result.stdout)
