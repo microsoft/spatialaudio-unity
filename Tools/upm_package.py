@@ -61,6 +61,9 @@ def main():
                 npm_package_full_path = oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz")
                 shutil.move(npm_package_full_path, npm_package_location)
                 print("Package successfully generated: " + npm_package_full_path)
+                for file in os.listdir(npm_package_location):
+                    if file.endswith(".tgz"):
+                        print("Package successfully moved to " + oshelpers.fixpath(npm_package_location, file))
             else:
                 print("Package successfully published")
     else:
