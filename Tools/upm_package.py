@@ -46,10 +46,11 @@ def main():
         result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
         local_copy = False
         if args.publish:
-            npm_command = ["cmd", "/c", "npm publish"]
+            npm_command = ["cmd", "/c", "npm publish", "--dry-run" if args.dryrun else ""]
         else:
             local_copy = True
             npm_command = ["cmd", "/c", "npm pack"]
+        print(npm_command)
         result = subprocess.run(npm_command, cwd=unity_project_full_path)
         if (result.returncode != 0):
             print("Package generation failed!")

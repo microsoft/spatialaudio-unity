@@ -77,7 +77,7 @@ jobs:
     displayName: Internal NPM Feed Authentication
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
-  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
+  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p -d
     displayName: Publish NPM Package to Internal Feed
   - task: CmdLine@2
     displayName: Copy .npmrc for Public Feed
@@ -90,7 +90,7 @@ jobs:
       customEndpoint: 'AIPMR Acoustics UPM Feed'
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
-  - script: python tools\upm_package.py -t "$(Pipeline.Workspace)\npm\$(NpmPackageName)-$(ProductVersion).tgz" -d
+  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p -d
     displayName: Dry run publish public NPM Package
     continueOnError: 'false'
   - task: PublishBuildArtifacts@1
