@@ -16,28 +16,42 @@ jobs:
         - script: echo Syncing Source
         - checkout: self
           submodules: true
-        - script: echo Downloading Nuget Artifacts
+        - script: echo Downloading NPM Artifacts
         - task: DownloadPipelineArtifact@2
           inputs:
-            artifactName: 'NugetPackage'
+            artifactName: 'NpmPackage'
             buildType: 'current'
-            targetPath: '$(Pipeline.Workspace)\nuget'
-        - task: PkgESCodeSign@10
-          displayName: 'CodeSign NuGet Package - ''SigningBranch'' only'
-          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-          env:
-            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+            targetPath: '$(Pipeline.Workspace)\npm'
+        - task: npmAuthenticate@0
+          displayName: Public NPM Feed Authentication
           inputs:
-            signConfigXml: '$(Build.SourcesDirectory)\Tools\Nuget.SignConfig.xml'
-            signTimeOut: 360
-            inPathRoot: '$(Pipeline.Workspace)\nuget'
-            outPathRoot: '$(Pipeline.Workspace)\nuget'
-        - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
-          displayName: 'Push to Nuget.org'
-          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-          inputs:
-            command: 'push'
-            packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
-            nuGetFeedType: 'external'
-            publishFeedCredentials: '$(NugetFeedId)'
+            workingFile: '$(Pipeline.Workspace)\npm\.npmrc'
+            customEndpoint: 'aipmr MixedReality-Unity-Packages'
+        - script: npm publish $(Pipeline.Workspace)\npm --dry-run
+          displayName: Publish NPM Package to Internal Feed
+
+#        - script: echo Downloading Nuget Artifacts
+#        - task: DownloadPipelineArtifact@2
+#          inputs:
+#            artifactName: 'NugetPackage'
+#            buildType: 'current'
+#            targetPath: '$(Pipeline.Workspace)\nuget'
+#        - task: PkgESCodeSign@10
+#          displayName: 'CodeSign NuGet Package - ''SigningBranch'' only'
+#          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+#          env:
+#            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+#          inputs:
+#            signConfigXml: '$(Build.SourcesDirectory)\Tools\Nuget.SignConfig.xml'
+#            signTimeOut: 360
+#            inPathRoot: '$(Pipeline.Workspace)\nuget'
+#            outPathRoot: '$(Pipeline.Workspace)\nuget'
+#        - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
+#          displayName: 'Push to Nuget.org'
+#          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+#          inputs:
+#            command: 'push'
+#            packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
+#            nuGetFeedType: 'external'
+#            publishFeedCredentials: '$(NugetFeedId)'
 
