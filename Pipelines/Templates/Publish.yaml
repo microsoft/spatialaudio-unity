@@ -28,7 +28,7 @@ jobs:
             workingFile: '$(Pipeline.Workspace)\npm\.npmrc'
             customEndpoint: 'aipmr MixedReality-Unity-Packages'
         - script: npm publish $(Pipeline.Workspace)\npm
-          displayName: Publish NPM Package to Internal Feed
+          displayName: Publish NPM Package to Public UPM Feed
 
         - script: echo Downloading Nuget Artifacts
         - task: DownloadPipelineArtifact@2
