@@ -3,7 +3,7 @@
 
 jobs:
 - deployment: Publish
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+#  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
   continueOnError: false
   displayName: Publish Packages to Feeds
   pool:
