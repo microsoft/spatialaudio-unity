@@ -77,7 +77,7 @@ jobs:
     displayName: Internal NPM Feed Authentication
     inputs:
       workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
-  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p -d
+  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
     displayName: Publish NPM Package to Internal Feed
   - task: CmdLine@2
     displayName: Copy .npmrc for Public Feed
