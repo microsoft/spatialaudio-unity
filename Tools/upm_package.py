@@ -46,7 +46,9 @@ def main():
         result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
         local_copy = False
         if args.publish:
-            npm_command = ["cmd", "/c", "npm publish", "--dry-run" if args.dryrun else ""]
+            npm_command = ["cmd", "/c", "npm publish"]
+            if args.dryrun:
+                npm_command.append("--dry-run")                
         else:
             local_copy = True
             npm_command = ["cmd", "/c", "npm pack"]
@@ -70,7 +72,10 @@ def main():
         if not os.path.exists(args.tarball):
             print("Can't find tarball " + args.tarball)
             exit
-        npm_command = ["cmd", "/c", "npm publish", args.tarball, "--dry-run" if args.dryrun else ""]
+        npm_command = ["cmd", "/c", "npm publish", args.tarball]
+        if args.dryrun:
+            npm_command.append("--dry-run")
+            
         print(npm_command)
         result = subprocess.run(npm_command)
         if (result.returncode != 0):
