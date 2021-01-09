@@ -16,8 +16,8 @@ jobs:
         - script: echo Syncing Source
         - checkout: self
           submodules: true
-        - script: dir '$(Pipeline.Workspace)\NpmPackage'
-          displayname: 'List  NpmPackage Contents'
+        - script: dir $(Pipeline.Workspace)\NpmPackage
+          displayName: 'List  NpmPackage Contents'
         - task: npmAuthenticate@0
           displayName: Public NPM Feed Authentication
           inputs:
