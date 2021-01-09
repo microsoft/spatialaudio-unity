@@ -26,7 +26,7 @@ jobs:
           displayName: Public NPM Feed Authentication
           inputs:
             workingFile: '$(Pipeline.Workspace)\NpmPackage\.npmrc'
-            customEndpoint: 'AIPMR SC MixedReality-Unity-Packages'
+            customEndpoint: 'aipmr MixedReality-Unity-Packages'
         - script: npm publish $(Pipeline.Workspace)\NpmPackage
           displayName: Publish NPM Package to Public UPM Feed
 
