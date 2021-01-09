@@ -17,11 +17,6 @@ jobs:
         - checkout: self
           submodules: true
         - script: echo Downloading NPM Artifacts
-        - task: DownloadPipelineArtifact@2
-          inputs:
-            artifactName: 'NpmPackage'
-            buildType: 'current'
-            targetPath: '$(Pipeline.Workspace)\NpmPackage'
         - task: npmAuthenticate@0
           displayName: Public NPM Feed Authentication
           inputs:
