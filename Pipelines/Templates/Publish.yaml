@@ -21,7 +21,7 @@ jobs:
           inputs:
             artifactName: 'NpmPackage'
             buildType: 'current'
-            targetPath: '$(Pipeline.Workspace)'
+            targetPath: '$(Pipeline.Workspace)\NpmPackage'
         - task: npmAuthenticate@0
           displayName: Public NPM Feed Authentication
           inputs:
