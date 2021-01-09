@@ -21,13 +21,13 @@ jobs:
           inputs:
             artifactName: 'NpmPackage'
             buildType: 'current'
-            targetPath: '$(Pipeline.Workspace)\npm'
+            targetPath: '$(Pipeline.Workspace)'
         - task: npmAuthenticate@0
           displayName: Public NPM Feed Authentication
           inputs:
-            workingFile: '$(Pipeline.Workspace)\npm\.npmrc'
+            workingFile: '$(Pipeline.Workspace)\NpmPackage\.npmrc'
             customEndpoint: 'AIPMR SC MixedReality-Unity-Packages'
-        - script: npm publish $(Pipeline.Workspace)\npm
+        - script: npm publish $(Pipeline.Workspace)\NpmPackage
           displayName: Publish NPM Package to Public UPM Feed
 
         - script: echo Downloading Nuget Artifacts
