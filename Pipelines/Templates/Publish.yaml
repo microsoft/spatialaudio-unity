@@ -3,7 +3,6 @@
 
 jobs:
 - deployment: Publish
-#  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
   continueOnError: false
   displayName: Publish Packages to Feeds
   pool:
@@ -16,38 +15,14 @@ jobs:
         - script: echo Syncing Source
         - checkout: self
           submodules: true
-        - script: dir $(Pipeline.Workspace)\NpmPackage
-          displayName: 'List  NpmPackage Contents'
+        - task: CmdLine@2
+          displayName: Copy .npmrc for Public Feed
+          inputs:
+            script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
         - task: npmAuthenticate@0
           displayName: Public NPM Feed Authentication
           inputs:
-            workingFile: '$(Pipeline.Workspace)\NpmPackage\.npmrc'
+            workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
             customEndpoint: 'aipmr MixedReality-Unity-Packages'
-        - script: npm publish $(Pipeline.Workspace)\NpmPackage --dry-run
+        - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p -d
           displayName: Publish NPM Package to Public UPM Feed
-
-#        - script: echo Downloading Nuget Artifacts
-#        - task: DownloadPipelineArtifact@2
-#          inputs:
-#            artifactName: 'NugetPackage'
-#            buildType: 'current'
-#            targetPath: '$(Pipeline.Workspace)\nuget'
-#        - task: PkgESCodeSign@10
-#          displayName: 'CodeSign NuGet Package - ''SigningBranch'' only'
-#          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-#          env:
-#            SYSTEM_ACCESSTOKEN: $(System.AccessToken)
-#          inputs:
-#            signConfigXml: '$(Build.SourcesDirectory)\Tools\Nuget.SignConfig.xml'
-#            signTimeOut: 360
-#            inPathRoot: '$(Pipeline.Workspace)\nuget'
-#            outPathRoot: '$(Pipeline.Workspace)\nuget'
-#        - task: 333b11bd-d341-40d9-afcf-b32d5ce6f23b@2
-#          displayName: 'Push to Nuget.org'
-#          condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
-#          inputs:
-#            command: 'push'
-#            packagesToPush: '$(Pipeline.Workspace)/nuget/**/*.nupkg'
-#            nuGetFeedType: 'external'
-#            publishFeedCredentials: '$(NugetFeedId)'
-
