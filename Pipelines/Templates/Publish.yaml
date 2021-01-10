@@ -16,13 +16,16 @@ jobs:
         - script: echo Syncing Source
         - checkout: self
           submodules: true
-        - script: echo Downloading NPM Artifacts
+        - task: CmdLine@2
+          displayName: Copy .npmrc for Public Feed
+          inputs:
+            script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
         - task: npmAuthenticate@0
           displayName: Public NPM Feed Authentication
           inputs:
-            workingFile: '$(Pipeline.Workspace)\NpmPackage\.npmrc'
+            workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
             customEndpoint: 'aipmr MixedReality-Unity-Packages'
-        - script: npm publish $(Pipeline.Workspace)\NpmPackage
+        - script: python tools\upm_package.py -s $(Pipeline.Workspace)\BuildArtifacts -o $(Pipeline.Workspace)\npm -v $(ProductVersion) -p
           displayName: Publish NPM Package to Public UPM Feed
 
         - script: echo Downloading Nuget Artifacts
