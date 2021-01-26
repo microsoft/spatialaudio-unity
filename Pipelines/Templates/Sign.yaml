@@ -16,7 +16,7 @@ jobs:
       ArtifactName: 'BuildArtifacts'
 
 - job: CodeSign_Binaries
-#  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
   dependsOn: Consolidate_Artifacts
   continueOnError: false
   pool:
