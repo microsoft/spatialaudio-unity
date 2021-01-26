@@ -43,7 +43,7 @@ jobs:
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
-      ConnectedServiceName: 'Project Acoustics ESRP Signing Service Connection'
+      ConnectedServiceName: $(ESRPConnection)
       FolderPath: '$(Pipeline.Workspace)\BuildArtifacts'
       Pattern: 'AudioPluginMicrosoftSpatializer.dll'
       SessionTimeout: 360
