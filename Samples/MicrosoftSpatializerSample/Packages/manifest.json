@@ -10,6 +10,7 @@
     }
   ],
   "dependencies": {
+    "com.microsoft.spatialaudio.spatializer.unity": "1.0.176",
     "com.microsoft.mixedreality.toolkit.foundation": "2.5.1",
     "com.microsoft.mixedreality.toolkit.tools": "2.5.1",
     "com.microsoft.mixedreality.toolkit.examples": "2.5.1",
