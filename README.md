@@ -41,13 +41,10 @@ If you forget to include submodules when cloning, add them with `git submodule u
   `python3 Tools\build.py`
 - To generate the Unity package:
   `python3 Tools\unity_package.py -u "c:\Program Files\Unity\Hub\Editor\2019.1.3f1\Editor" -v 0.1.0`
-- To generate the NuGet package:
-  `python3 Tools\nuget_package.py -v 0.1.0`
 - To generate the UPM package:
   `python3 Tools\upm_package.py -v 0.1.0`
 
 ### Artifacts
-- Build produces UPM, NuGet and Unity asset packages .
+- Build produces UPM and Unity asset packages .
 - Unity asset package is available under [releases tab](https://github.com/microsoft/spatialaudio-unity/releases)
-- NuGet package is available via [NuGet](https://www.nuget.org/packages/Microsoft.SpatialAudio.Spatializer.Unity/).
 - UPM Package is available via [Microsoft Mixed Reality scoped registry](https://microsoft.github.io/MixedRealityToolkit-Unity/version/releases/2.5.0/Documentation/usingupm.html)
