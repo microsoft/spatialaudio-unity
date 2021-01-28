@@ -46,6 +46,13 @@
       },
       "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
     },
+    "com.microsoft.spatialaudio.spatializer.unity": {
+      "version": "1.0.176",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
+    },
     "com.unity.collab-proxy": {
       "version": "1.2.16",
       "depth": 0,
