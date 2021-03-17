@@ -21,6 +21,7 @@ ExportedObj/
 *.pidb
 *.booproj
 *.svd
+*.pdb
 *.opendb
 *.log
 
