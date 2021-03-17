@@ -13,10 +13,13 @@ import oshelpers
 import shutil
 import subprocess
 
-def copy_spatializer(source_dir, target_dir):
-    source_file = os.path.join(source_dir, constants.spatializer_dll)
+def copy_file(source_file, target_dir):
     print("Copying " + source_file + " to " + target_dir)
     shutil.copy(source_file, target_dir)
+
+def copy_spatializer(source_dir, target_dir):
+    copy_file(os.path.join(source_dir, constants.spatializer_dll), target_dir)
+    copy_file(os.path.join(source_dir, constants.spatializer_pdb), target_dir)
 
 def stage_binaries(artifacts_path = ""):
     git_root = oshelpers.fixpath(githelpers.get_root())
