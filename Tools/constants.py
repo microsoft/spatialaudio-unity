@@ -8,6 +8,7 @@ sys.dont_write_bytecode = True
 build_root = "build"
 solution_file = "Microsoft.SpatialAudio.Unity.sln"
 spatializer_dll = "AudioPluginMicrosoftSpatializer.dll"
+spatializer_pdb = "AudioPluginMicrosoftSpatializer.pdb"
 spatializer_plugin_name = "Microsoft.SpatialAudio.Spatializer.Unity"
 spatializer_npm_package_name= "com.microsoft.spatialaudio.spatializer.unity"
 unity_project_dir = "Source/Plugins/IsacPluginGenerator"
