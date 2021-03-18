@@ -38,15 +38,41 @@ jobs:
       scanType: 'Register'
       verbosity: 'Verbose'
       alertWarningLevel: 'High'
-  - task: PkgESCodeSign@10
+  - task: EsrpCodeSigning@1
     displayName: 'CodeSign Binaries - ''SigningBranch'' only'
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
-      signConfigXml: '$(Build.SourcesDirectory)\Tools\SignConfig.xml'
-      signTimeOut: 360
-      inPathRoot: '$(Pipeline.Workspace)\BuildArtifacts'
-      outPathRoot: '$(Pipeline.Workspace)\BuildArtifacts'
+      ConnectedServiceName: $(ESRPConnection)
+      FolderPath: '$(Pipeline.Workspace)\BuildArtifacts'
+      Pattern: 'AudioPluginMicrosoftSpatializer.dll'
+      SessionTimeout: 360
+      MaxConcurrency: 5
+      MaxRetryAttempts: 5
+      signConfigType: inlineSignParams
+      inlineOperation: |
+        [
+          {
+            "KeyCode" : "CP-230012",
+            "OperationCode" : "SigntoolSign",
+            "Parameters" : {
+              "OpusName" : "Microsoft",
+              "OpusInfo" : "http://www.microsoft.com",
+              "FileDigest" : "/fd \"SHA256\"",
+              "PageHash" : "/NPH",
+              "TimeStamp" : "/tr \"http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer\" /td sha256"
+            },
+            "ToolName" : "sign",
+            "ToolVersion" : "1.0"
+          },
+          {
+            "KeyCode" : "CP-230012",
+            "OperationCode" : "SigntoolVerify",
+            "Parameters" : {},
+            "ToolName" : "sign",
+            "ToolVersion" : "1.0"
+          }
+        ]
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Consolidated and Signed Artifacts'
     inputs:
