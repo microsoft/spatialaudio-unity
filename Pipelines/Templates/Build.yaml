@@ -17,8 +17,7 @@ jobs:
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
   - task: UniversalPackages@0
-    condition: and(succeeded(), eq(variables['PushHrtfDsp'], 'true'))
-    displayName: Universal Publish HrtfDsp to Public Feed
+    displayName: Download hrtfdsp package (test)
     inputs:
       command: download
       downloadDirectory: $(Build.SourcesDirectory)\Source\External\hrtfdsp
