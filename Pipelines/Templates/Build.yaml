@@ -21,7 +21,7 @@ jobs:
     displayName: 'Run CMake'
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - script: python tools\build.py --platform Windows --arch x64 --config 'RelWithDebInfo' --clean
+  - script: python tools\build.py --platform Windows --arch x64 --config RelWithDebInfo --clean
   - task: CopyFiles@2
     inputs:
       SourceFolder: 'build\windows\x64\bin\RelWithDebInfo'
@@ -51,7 +51,7 @@ jobs:
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
     displayName: 'Run CMake'
-  - script: python tools\build.py --platform Windows --arch Win32 --config 'RelWithDebInfo' --clean
+  - script: python tools\build.py --platform Windows --arch Win32 --config RelWithDebInfo --clean
   - task: CopyFiles@2
     inputs:
       SourceFolder: 'build\windows\Win32\bin\RelWithDebInfo'
@@ -81,7 +81,7 @@ jobs:
     displayName: 'Run CMake'
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - script: python tools\build.py --platform WindowsStore --arch x64 --config 'RelWithDebInfo' --clean
+  - script: python tools\build.py --platform WindowsStore --arch x64 --config RelWithDebInfo --clean
   - task: CopyFiles@2
     inputs:
       SourceFolder: 'build\WindowsStore\x64\bin\RelWithDebInfo'
@@ -111,7 +111,7 @@ jobs:
     displayName: 'Run CMake'
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - script: python tools\build.py --platform WindowsStore --arch Win32 --config 'RelWithDebInfo' --clean
+  - script: python tools\build.py --platform WindowsStore --arch Win32 --config RelWithDebInfo --clean
   - task: CopyFiles@2
     inputs:
       SourceFolder: 'build\WindowsStore\Win32\bin\RelWithDebInfo'
@@ -141,7 +141,7 @@ jobs:
     displayName: 'Run CMake'
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - script: python tools\build.py --platform WindowsStore --arch ARM --config 'RelWithDebInfo' --clean
+  - script: python tools\build.py --platform WindowsStore --arch ARM --config RelWithDebInfo --clean
   - task: CopyFiles@2
     inputs:
       SourceFolder: 'build\WindowsStore\ARM\bin\RelWithDebInfo'
@@ -171,7 +171,7 @@ jobs:
     displayName: 'Run CMake'
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - script: python tools\build.py --platform WindowsStore --arch ARM64 --config 'RelWithDebInfo' --clean
+  - script: python tools\build.py --platform WindowsStore --arch ARM64 --config RelWithDebInfo --clean
   - task: CopyFiles@2
     inputs:
       SourceFolder: 'build\WindowsStore\ARM64\bin\RelWithDebInfo'
