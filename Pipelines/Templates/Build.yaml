@@ -58,13 +58,13 @@ jobs:
     displayName: 'Run CMake'
   - task: MSBuild@1
     inputs:
-      solution: 'build\windows\x86\Microsoft.SpatialAudio.Unity.sln'
+      solution: 'build\windows\Win32\Microsoft.SpatialAudio.Unity.sln'
       msbuildArchitecture: 'x64'
       configuration: 'RelWithDebInfo'
       clean: true
   - task: CopyFiles@2
     inputs:
-      SourceFolder: 'build\windows\x86\bin\RelWithDebInfo'
+      SourceFolder: 'build\windows\Win32\bin\RelWithDebInfo'
       Contents: '**'
       TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
   - task: PublishBuildArtifacts@1
@@ -128,13 +128,13 @@ jobs:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
   - task: MSBuild@1
     inputs:
-      solution: 'build\WindowsStore\x86\Microsoft.SpatialAudio.Unity.sln'
+      solution: 'build\WindowsStore\Win32\Microsoft.SpatialAudio.Unity.sln'
       msbuildArchitecture: 'x64'
       configuration: 'RelWithDebInfo'
       clean: true
   - task: CopyFiles@2
     inputs:
-      SourceFolder: 'build\WindowsStore\x86\bin\RelWithDebInfo'
+      SourceFolder: 'build\WindowsStore\Win32\bin\RelWithDebInfo'
       Contents: '**'
       TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
   - task: PublishBuildArtifacts@1
