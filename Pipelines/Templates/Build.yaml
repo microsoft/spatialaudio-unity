@@ -23,7 +23,7 @@ jobs:
       downloadDirectory: $(Build.SourcesDirectory)\Source\External\hrtfdsp
       feedsToUse: external
       externalFeedCredentials: 'AIPMR Spatial Audio Packages Feed'
-      feedDownloadExternal: 'SpatialAudio-packages'
+      feedDownloadExternal: 'SpatialAudio-packages-test'
       versionDownloadExternal: '2.1.571-prerelease'
       packageDownloadExternal: 'pa-hrtfdsp'
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
