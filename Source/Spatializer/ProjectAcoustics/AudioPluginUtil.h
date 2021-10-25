@@ -1,10 +1,9 @@
-// Unity's audio plugin header
-
 #pragma once
 
 #include "AudioPluginInterface.h"
 
-#if PLATFORM_WIN
+#ifdef WINDOWS
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else
 #include <pthread.h>

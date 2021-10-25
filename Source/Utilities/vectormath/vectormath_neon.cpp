@@ -2,16 +2,16 @@
 // Licensed under the MIT License.
 
 #include "cputype.h"
-#if defined(ARCH_ARM) || defined(ARCH_ARM64)
 
-#include "vectormath.h"
+#if defined(ARCH_ARM) || defined(ARCH_ARM64)
+#include "VectorMath.h"
 #include "vectormath_neon.h"
 // For the unaligned portions, some functions fall back to the generic impl
 #include "vectormath_generic.h"
-#if defined(ARCH_ARM)
-#include <arm_neon.h>
-#elif defined(ARCH_ARM64)
+#if defined(ARCH_ARM64) && !defined(__clang__)
 #include <arm64_neon.h>
+#else
+#include <arm_neon.h>
 #endif
 
 namespace VectorMath

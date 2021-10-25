@@ -14,4 +14,3 @@ constexpr uint32_t c_HrtfMaxSources = 128;
 constexpr float c_MinAudibleGain = 0.00002f;   // -94dB
 constexpr auto c_MinimumSourceDistance = 0.1f; // In meters
 constexpr auto c_MaxOcclusionFactor = 2.0f;
-constexpr auto c_MinTransmissionDb = -60.0f;

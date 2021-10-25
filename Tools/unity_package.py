@@ -10,7 +10,6 @@ import constants
 import githelpers
 import os
 import oshelpers
-import shutil
 import stage
 import subprocess
 

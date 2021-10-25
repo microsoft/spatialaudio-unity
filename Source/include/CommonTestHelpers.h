@@ -3,9 +3,8 @@
 #pragma once
 
 #include <cmath>
-#define WIN32_LEAN_AND_MEAN
-#include "windows.h"
-#include "mmreg.h"
+#include "WaveFormat.h"
+#include "gtest.h"
 
 #define HRTF_2PI 6.28318530f
 

@@ -1,34 +1,28 @@
-// Unity's audio plugin header
-
 #pragma once
 
-#define UNITY_AUDIO_PLUGIN_API_VERSION 0x010300
+#define UNITY_AUDIO_PLUGIN_API_VERSION 0x010402
 
 #ifndef UNITY_PREFIX_CONFIGURE_H
 
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(_WIN64)
-#define UNITY_WIN 1
 #define PLATFORM_WIN 1
+#if defined(WINAPI_FAMILY) && (WINAPI_FAMILY == WINAPI_FAMILY_APP)
+#define PLATFORM_WINRT 1
+#endif
 #elif defined(__MACH__) || defined(__APPLE__)
-#define UNITY_OSX 1
+#define PLATFORM_OSX 1
 #elif defined(__ANDROID__)
-#define UNITY_ANDROID 1
+#define PLATFORM_ANDROID 1
 #elif defined(__linux__)
-#define UNITY_LINUX 1
-#elif defined(__PS3__)
-#define UNITY_PS3 1
-#elif defined(__SPU__)
-#define UNITY_SPU 1
-#elif defined(DURANGO)
-#define UNITY_XBOXONE 1
+#define PLATFORM_LINUX 1
 #endif
 
-#if defined(_AMD64_) || defined(__LP64__)
-#define UNITY_64 1
-#define UNITY_32 0
+#if defined(_AMD64_) || defined(__LP64__) || defined(_M_ARM64)
+#define PLATFORM_ARCH_64 1
+#define PLATFORM_ARCH_32 0
 #else
-#define UNITY_64 0
-#define UNITY_32 1
+#define PLATFORM_ARCH_64 0
+#define PLATFORM_ARCH_32 1
 #endif
 
 #ifndef SInt16_defined
@@ -51,8 +45,8 @@ typedef unsigned char UInt8;
 typedef signed char SInt8;
 #endif
 
-#if UNITY_64
-#if UNITY_LINUX
+#if PLATFORM_ARCH_64
+#if PLATFORM_LINUX || PLATFORM_ANDROID
 #ifndef SInt32_defined
 #define SInt32_defined
 typedef signed int SInt32;
@@ -69,7 +63,7 @@ typedef unsigned long UInt64;
 #define SInt64_defined
 typedef signed long SInt64;
 #endif
-#elif UNITY_OSX
+#elif PLATFORM_OSX
 #ifndef SInt32_defined
 #define SInt32_defined
 typedef signed int SInt32;
@@ -86,7 +80,7 @@ typedef unsigned long long UInt64;
 #define SInt64_defined
 typedef signed long long SInt64;
 #endif
-#elif UNITY_WIN
+#elif PLATFORM_WIN
 #ifndef SInt32_defined
 #define SInt32_defined
 typedef signed long SInt32;
@@ -125,16 +119,22 @@ typedef signed long long SInt64;
 
 #endif
 
-#if UNITY_WIN
+#if PLATFORM_WINRT
+#define AUDIO_CALLING_CONVENTION __stdcall
+#else
+#define AUDIO_CALLING_CONVENTION
+#endif
+
+#if PLATFORM_WIN
 #define UNITY_AUDIODSP_CALLBACK __stdcall
-#elif UNITY_OSX
+#elif PLATFORM_OSX
 #define UNITY_AUDIODSP_CALLBACK
 #else
 #define UNITY_AUDIODSP_CALLBACK
 #endif
 
 // Attribute to make function be exported from a plugin
-#if UNITY_WIN
+#if PLATFORM_WIN
 #define UNITY_AUDIODSP_EXPORT_API __declspec(dllexport)
 #else
 #define UNITY_AUDIODSP_EXPORT_API
@@ -144,7 +144,7 @@ typedef signed long long SInt64;
 #define UNITY_AUDIODSP_CALLBACK __stdcall
 #elif defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(_WIN64)
 #define UNITY_AUDIODSP_CALLBACK __stdcall
-#elif defined(__MACH__) || defined(__ANDROID__) || defined(__linux__) || defined(__QNX__)
+#elif defined(__MACH__) || defined(__ANDROID__) || defined(__linux__)
 #define UNITY_AUDIODSP_CALLBACK
 #else
 #define UNITY_AUDIODSP_CALLBACK
@@ -152,9 +152,7 @@ typedef signed long long SInt64;
 
 #define UNITY_AUDIODSP_RESULT int
 
-#if !UNITY_SPU // asserts require _exit() to be defined
 #include <assert.h>
-#endif
 
 enum
 {
@@ -184,7 +182,17 @@ enum UnityAudioEffectDefinitionFlags
     UnityAudioEffectDefinitionFlags_IsSideChainTarget =
         1 << 0, // Does this effect need a side chain buffer and can it be targeted by a Send?
     UnityAudioEffectDefinitionFlags_IsSpatializer =
-        2 << 0, // Should this plugin be inserted at sources and take over panning?
+        1 << 1, // Should this plugin be inserted at sources and take over panning?
+    UnityAudioEffectDefinitionFlags_IsAmbisonicDecoder =
+        1 << 2, // Should this plugin be used for ambisonic decoding? Added in Unity 2017.1, with
+                // UNITY_AUDIO_PLUGIN_API_VERSION 0x010400.
+    UnityAudioEffectDefinitionFlags_AppliesDistanceAttenuation =
+        1 << 3, // Spatializers Only: Does this spatializer apply distance-based attenuation? Added in Unity 2017.1,
+                // with UNITY_AUDIO_PLUGIN_API_VERSION 0x010400.
+    UnityAudioEffectDefinitionFlags_NeedsSpatializerData =
+        1 << 4 // For effects that are not spatializers or ambisonic decoders, but want access to
+               // UnityAudioSpatializerData. AudioSource-related data will be set to default values for mixer effects.
+               // Added in Unity 2018.1, with UNITY_AUDIO_PLUGIN_API_VERSION 0x010402.
 };
 
 enum UnityAudioEffectStateFlags
@@ -212,12 +220,32 @@ struct UnityAudioSpatializerData
     float reverbzonemix;      // Reverb zone mix level parameter (and curve) on audio source
     float spread;             // Spread parameter of the audio source (0..360 degrees)
     float stereopan;          // Stereo panning parameter of the audio source (-1 = fully left, 1 = fully right)
-    UnityAudioEffect_DistanceAttenuationCallback distanceattenuationcallback; // The spatializer plugin may override the
-                                                                              // distance attenuation in order to
-                                                                              // influence the voice prioritization
-                                                                              // (leave this callback as NULL to use the
-                                                                              // built-in audio source attenuation
-                                                                              // curve)
+    UnityAudioEffect_DistanceAttenuationCallback
+        distanceattenuationcallback; // The spatializer plugin may override the distance attenuation in order to
+                                     // influence the voice prioritization (leave this callback as NULL to use the
+                                     // built-in audio source attenuation curve)
+    float minDistance; // Min distance of the audio source. This value may be helpful to determine when to apply
+                       // near-field effects. Added in Unity 2018.1, with UNITY_AUDIO_PLUGIN_API_VERSION 0x010401.
+    float maxDistance; // Max distance of the audio source. Added in Unity 2018.1, with UNITY_AUDIO_PLUGIN_API_VERSION
+                       // 0x010401.
+};
+
+struct UnityAudioAmbisonicData
+{
+    float listenermatrix[16]; // Matrix that transforms sourcepos into the local space of the listener
+    float sourcematrix[16];   // Transform matrix of audio source
+    float spatialblend;       // Distance-controlled spatial blend
+    float reverbzonemix;      // Reverb zone mix level parameter (and curve) on audio source
+    float spread;             // Spread parameter of the audio source (0..360 degrees)
+    float stereopan;          // Stereo panning parameter of the audio source (-1 = fully left, 1 = fully right)
+    UnityAudioEffect_DistanceAttenuationCallback
+        distanceattenuationcallback; // The ambisonic decoder plugin may override the distance attenuation in order to
+                                     // influence the voice prioritization (leave this callback as NULL to use the
+                                     // built-in audio source attenuation curve)
+    int ambisonicOutChannels;        // This tells ambisonic decoders how many output channels will actually be used.
+    float volume; // Volume/mute of the audio source. If the the source is muted, volume is set to 0.0; otherwise, it is
+                  // set to the audio source's volume. Volume is applied after the ambisonic decoder, so this is just
+                  // informational. Added in Unity 2018.1, with UNITY_AUDIO_PLUGIN_API_VERSION 0x010401.
 };
 
 struct UnityAudioEffectState
@@ -226,8 +254,8 @@ struct UnityAudioEffectState
 // Allow nameless structs; this is non-standard but supported by all major compilers
 #pragma warning(disable : 4201)
 #endif
-
-    union {
+    union
+    {
         struct
         {
             UInt32 structsize;  // Size of this struct
@@ -247,18 +275,19 @@ struct UnityAudioEffectState
             UInt32 dspbuffersize;  // Number of frames being processed per process callback. Use this to allocate
                                    // temporary buffers before processing starts.
             UInt32 hostapiversion; // Version of plugin API used by host
+
+            UnityAudioAmbisonicData* ambisonicdata; // Data for ambisonic plugins. Added in Unity 2017.1, with
+                                                    // UNITY_AUDIO_PLUGIN_API_VERSION 0x010400.
         };
-        unsigned char pad[80]; // This entire structure must be a multiple of 16 bytes (and and instance 16 byte
-                               // aligned) for PS3 SPU DMA requirements
+        unsigned char pad[80]; // This padding was historically due to PS3 SPU DMA requirements. We aren't removing it
+                               // now because plugins may rely on this struct being at least this size.
     };
 #ifdef __cplusplus
     template <typename T>
     inline T* GetEffectData() const
     {
-#if !UNITY_SPU // asserts require _exit() to be defined
         assert(effectdata);
         assert(internal);
-#endif
         return (T*) effectdata;
     }
 
@@ -290,20 +319,20 @@ struct UnityAudioEffectDefinition
     UInt32 numparameters; // The number of parameters exposed by this plugin.
     UInt64 flags;         // Various capabilities and requirements of the plugin.
     char name[32];        // Name used for registration of the effect. This name will also be displayed in the GUI.
-    UnityAudioEffect_CreateCallback create;   // The create callback is called when DSP unit is created and can be null.
-    UnityAudioEffect_ReleaseCallback release; // The release callback is called just before the plugin is freed and
-                                              // should free any data associated with this specific instance of the
-                                              // plugin. No further callbacks related to the instance will happen after
-                                              // this function has been called.
+    UnityAudioEffect_CreateCallback create; // The create callback is called when DSP unit is created and can be null.
+    UnityAudioEffect_ReleaseCallback
+        release; // The release callback is called just before the plugin is freed and should free any data associated
+                 // with this specific instance of the plugin. No further callbacks related to the instance will happen
+                 // after this function has been called.
     UnityAudioEffect_ResetCallback reset; // The reset callback is called by the user to bring back the plugin instance
                                           // into its initial state. Use to avoid clicks or artifacts.
     UnityAudioEffect_ProcessCallback process; // The processing callback is repeatedly called with a block of input
                                               // audio to read from and an output block to write to.
     UnityAudioEffect_SetPositionCallback
-        setposition;                          // The position callback can be used for implementing seek operations.
-    UnityAudioParameterDefinition* paramdefs; // A pointer to the definitions of the parameters exposed by this plugin.
-                                              // This data pointed to must remain valid for the whole lifetime of the
-                                              // dynamic library (ideally it's static).
+        setposition; // The position callback can be used for implementing seek operations.
+    UnityAudioParameterDefinition*
+        paramdefs; // A pointer to the definitions of the parameters exposed by this plugin. This data pointed to must
+                   // remain valid for the whole lifetime of the dynamic library (ideally it's static).
     UnityAudioEffect_SetFloatParameterCallback
         setfloatparameter; // This is called whenever one of the exposed parameters is changed.
     UnityAudioEffect_GetFloatParameterCallback getfloatparameter; // This is called to query parameter values.
@@ -312,4 +341,5 @@ struct UnityAudioEffectDefinition
 };
 
 // This function fills in N pointers for the N effects contained in the library and returns N.
-extern "C" UNITY_AUDIODSP_EXPORT_API int UnityGetAudioEffectDefinitions(UnityAudioEffectDefinition*** descptr);
+extern "C" UNITY_AUDIODSP_EXPORT_API int AUDIO_CALLING_CONVENTION
+UnityGetAudioEffectDefinitions(UnityAudioEffectDefinition*** descptr);

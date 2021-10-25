@@ -4,13 +4,13 @@
 
 #include "AudioPluginUtil.h"
 #include "HrtfWrapper.h"
-#include <cstring>
-#include "vectormath.h"
+#include "VectorMath.h"
 #include "mathutility.h"
+
+#include <cstring>
 
 namespace SpatialMixer
 {
-
     enum EffectParams
     {
         AdditionalReverbPower,
@@ -60,7 +60,7 @@ namespace SpatialMixer
             "Reverb Time Scale Factor");
         RegisterParameter(
             definition,
-            "Use Panning",
+            "Spatializer",
             "",
             0.0f,
             1.0f,
@@ -68,7 +68,7 @@ namespace SpatialMixer
             1.0f,
             1.0f,
             EffectParams::MultichannelPanning,
-            "Switch between binaural (0) and panning (1). Values other than 0 and 1 are set to 0 (binaural).");
+            "0 for binaural, 1 for panning, in between for low-cost, FLEXible spatializer.");
 
         return numparams;
     }
@@ -127,9 +127,13 @@ namespace SpatialMixer
             {
                 HrtfWrapper::SetActiveEngine(HrtfEngineType_Panner);
             }
-            else
+            else if (value == 0.0f)
             {
                 HrtfWrapper::SetActiveEngine(HrtfEngineType_Binaural);
+            }
+            else
+            {
+                HrtfWrapper::SetActiveEngine(HrtfEngineType_Flex);
             }
         }
 

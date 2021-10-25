@@ -1,5 +1,3 @@
-// Unity's audio plugin header
-
 #include "AudioPluginUtil.h"
 #include <string.h>
 #include <exception>
@@ -27,8 +25,9 @@ void RegisterParameter(
     }
     strcpy_s(definition.paramdefs[enumvalue].name, name);
     strcpy_s(definition.paramdefs[enumvalue].unit, unit);
-    definition.paramdefs[enumvalue].description =
-        (description != nullptr) ? strnew(description) : (name != nullptr) ? strnew(name) : nullptr;
+    definition.paramdefs[enumvalue].description = (description != nullptr) ? strnew(description)
+                                                  : (name != nullptr)      ? strnew(name)
+                                                                           : nullptr;
     definition.paramdefs[enumvalue].defaultval = defaultval;
     definition.paramdefs[enumvalue].displayscale = displayscale;
     definition.paramdefs[enumvalue].displayexponent = displayexponent;
@@ -110,7 +109,8 @@ void DeclareEffect(
         ns::GetFloatBufferCallback,                                                                                    \
         ns::InternalRegisterEffectDefinition);
 
-extern "C" UNITY_AUDIODSP_EXPORT_API int UnityGetAudioEffectDefinitions(UnityAudioEffectDefinition*** definitionptr)
+extern "C" UNITY_AUDIODSP_EXPORT_API int AUDIO_CALLING_CONVENTION
+UnityGetAudioEffectDefinitions(UnityAudioEffectDefinition*** definitionptr)
 {
     static UnityAudioEffectDefinition definition[256];
     static UnityAudioEffectDefinition* definitionp[256];
