@@ -19,7 +19,7 @@ jobs:
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
-      AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
   - task: MSBuild@1
     inputs:
       solution: 'build\windows\x64\Microsoft.SpatialAudio.Unity.sln'
@@ -52,7 +52,7 @@ jobs:
     displayName: 'Update Submodules'
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
     env:
-      AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
     displayName: 'Run CMake'
   - task: MSBuild@1
     inputs:
@@ -87,7 +87,7 @@ jobs:
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
-      AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
   - task: MSBuild@1
     inputs:
       solution: 'build\WindowsStore\x64\Microsoft.SpatialAudio.Unity.sln'
@@ -121,7 +121,7 @@ jobs:
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
-      AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
   - task: MSBuild@1
     inputs:
       solution: 'build\WindowsStore\x86\Microsoft.SpatialAudio.Unity.sln'
@@ -155,7 +155,7 @@ jobs:
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
-      AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
   - task: MSBuild@1
     inputs:
       solution: 'build\WindowsStore\ARM\Microsoft.SpatialAudio.Unity.sln'
@@ -189,7 +189,7 @@ jobs:
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
-      AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
+      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
   - task: MSBuild@1
     inputs:
       solution: 'build\WindowsStore\ARM64\Microsoft.SpatialAudio.Unity.sln'
