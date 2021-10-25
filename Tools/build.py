@@ -27,7 +27,7 @@ def main():
     parser.add_argument("--platform", help="Platform to build", type=str.lower)
     parser.add_argument("--arch", help="Architecture to build", type=str.lower)
     parser.add_argument("--config", help="Configuration to build", type=str.lower)
-    parser.add_argument("--clean", help="Clean and build", type=str.lower)
+    parser.add_argument("--clean", help="Clean and build", action='store_true')
     args = parser.parse_args()
 
     clean = False
