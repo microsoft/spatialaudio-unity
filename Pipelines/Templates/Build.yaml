@@ -17,9 +17,9 @@ jobs:
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
   - task: CmdLine@2
-      inputs:
-        script: echo $(System.AccessToken) | az devops login
-      displayName: 'Azure DevOps authentication'
+    inputs:
+      script: echo $(System.AccessToken) | az devops login
+    displayName: 'Azure DevOps authentication'
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
