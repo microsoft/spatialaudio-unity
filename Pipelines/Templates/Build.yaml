@@ -16,10 +16,17 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
-  - task: CmdLine@2
+  - task: UniversalPackages@0
+    condition: and(succeeded(), eq(variables['PushHrtfDsp'], 'true'))
+    displayName: Universal Publish HrtfDsp to Public Feed
     inputs:
-      script: echo $(System.AccessToken) | az devops login
-    displayName: 'Azure DevOps authentication'
+      command: download
+      downloadDirectory: $(Build.SourcesDirectory)\Source\External\hrtfdsp
+      feedsToUse: external
+      externalFeedCredentials: 'AIPMR Spatial Audio Packages Feed'
+      feedDownloadExternal: 'SpatialAudio-packages'
+      versionDownloadExternal: '2.1.571-prerelease'
+      packageDownloadExternal: 'pa-hrtfdsp'
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
