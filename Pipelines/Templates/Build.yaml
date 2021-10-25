@@ -16,16 +16,7 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
-  - task: UniversalPackages@0
-    displayName: Download hrtfdsp package (test)
-    inputs:
-      command: download
-      downloadDirectory: $(Build.SourcesDirectory)\Source\External\hrtfdsp
-      feedsToUse: external
-      externalFeedCredentials: 'AIPMR Spatial Audio Packages Feed'
-      feedDownloadExternal: 'SpatialAudio-packages-test'
-      versionDownloadExternal: '2.1.571-prerelease'
-      packageDownloadExternal: 'pa-hrtfdsp'
+  - template: DownloadPackage.yaml
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
@@ -60,6 +51,7 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
+  - template: DownloadPackage.yaml
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
     env:
       AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
@@ -94,6 +86,7 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
+  - template: DownloadPackage.yaml
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
@@ -128,6 +121,7 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
+  - template: DownloadPackage.yaml
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
@@ -162,6 +156,7 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
+  - template: DownloadPackage.yaml
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
@@ -196,6 +191,7 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
+  - template: DownloadPackage.yaml
   - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
     displayName: 'Run CMake'
     env:

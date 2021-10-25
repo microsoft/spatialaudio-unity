@@ -1,0 +1,24 @@
+parameters:
+- name: package
+  type: string
+  default: 'pa-hrtfdsp'
+- name: version
+  type: string
+  default: '2.1.571-prerelease'
+- name: destination
+  type: string
+  default: $(Build.SourcesDirectory)\Source\External\hrtfdsp
+
+steps:
+  - task: UniversalPackages@0
+    displayName: Download Universal Package
+    inputs:
+      command: download
+      downloadDirectory: ${{ parameters.destination }}
+      feedsToUse: external
+      externalFeedCredentials: 'AIPMR Spatial Audio Packages Feed'
+      feedDownloadExternal: 'SpatialAudio-packages-test'
+      packageDownloadExternal: ${{ parameters.pacakge }}
+      versionDownloadExternal: ${{ parameters.version }}
+
+
