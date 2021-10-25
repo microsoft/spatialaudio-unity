@@ -30,9 +30,10 @@ android_x86_debug_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=Debug", "-
 def call_cmake():
     return "cmake -G "
 
-def download_universal_package(externals_path, working_dir):
-    hrtfdsp_command = "az artifacts universal download --organization \"https://dev.azure.com/aipmr/\" --feed \"SpatialAudio-packages-test\" --name \"pa-hrtfdsp\" --version \"2.1.571-prerelease\" --path " + oshelpers.fixpath(externals_path, "hrtfdsp")
-    subprocess.run(hrtfdsp_command, cwd = working_dir, check = True, shell = True)
+def download_universal_package(externals_path, working_dir, download = False):
+    if (download == True):
+        hrtfdsp_command = "az artifacts universal download --organization \"https://dev.azure.com/aipmr/\" --feed \"SpatialAudio-packages-test\" --name \"pa-hrtfdsp\" --version \"2.1.571-prerelease\" --path " + oshelpers.fixpath(externals_path, "hrtfdsp")
+        subprocess.run(hrtfdsp_command, cwd = working_dir, check = True, shell = True)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -41,6 +42,7 @@ def main():
     parser.add_argument("--android", help="Generate Android configurations", action='store_true')
     parser.add_argument("--notest", help="Skip generation of test configurations", action='store_true')
     parser.add_argument("-v", "--version", help="Semantic version string", type=str.lower)
+    parser.add_argument("--download", help="Download universal packages", action='store_true')
     args = parser.parse_args()
 
     cmake_windows = False
@@ -72,7 +74,7 @@ def main():
     print("Creating build dirs under '%s'" %build_dir)
 
     # Download universal package dependencies
-    download_universal_package(oshelpers.fixpath(git_root, "Source", "External"), git_root)
+    download_universal_package(oshelpers.fixpath(git_root, "Source", "External"), git_root, True if args.download else False)
 
     # Pass version (if specified) to CMake
     product_version_cmake = ''
