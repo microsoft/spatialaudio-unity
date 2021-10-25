@@ -24,7 +24,9 @@ def build(platform, architecture, configuration = "relwithdebinfo", clean = Fals
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--platform", help="Platform to build")
+    parser.add_argument("--platform", help="Platform to build", type=str.lower)
+    parser.add_argument("--arch", help="Architecture to build", type=str.lower)
+    parser.add_argument("--config", help="Configuration to build", type=str.lower)
     parser.add_argument("--clean", help="Clean and build", type=str.lower)
     args = parser.parse_args()
 
@@ -34,11 +36,13 @@ def main():
 
     # Build as specified
     for platform in constants.build_platform_arch_map.keys():
-        platform_architectures = constants.build_platform_arch_map[platform]
-        for arch in platform_architectures:
-            for config in constants.valid_configurations:
-                if (args.platform == None or args.platform == platform):
-                    build(platform, arch, config, clean)
+        if (args.platform == None or args.platform == platform.lower()):
+            platform_architectures = constants.build_platform_arch_map[platform]
+            for arch in platform_architectures:
+                if (args.arch == None or args.arch == arch.lower()):
+                    for config in constants.valid_configurations:
+                        if (args.config == None or args.config == config.lower()):
+                            build(platform, arch, config, clean)
 
 if __name__ == '__main__':
     main()
