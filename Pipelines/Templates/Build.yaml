@@ -16,6 +16,21 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
+  - script: |
+      echo 'Install Azure DevOps Extension'
+      az extension add -n azure-devops
+
+      echo 'Login Azure DevOps Extension'
+      echo ${AZURE_DEVOPS_CLI_PAT} | az devops login
+
+      echo 'Set default Azure DevOps organization and project'
+      az devops configure --defaults organization=$(System.TeamFoundationCollectionUri) project=$(System.TeamProject)
+
+      echo 'AzureCli version:'
+      az --version
+    displayName: Configure AzureCli tooling
+    env:
+      AZURE_DEVOPS_CLI_PAT: $(System.AccessToken)
   - script: python tools\runcmake.py --windows --version $(ProductVersion)
     displayName: 'Run CMake'
     env:
