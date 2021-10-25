@@ -18,7 +18,7 @@ steps:
       feedsToUse: external
       externalFeedCredentials: 'AIPMR Spatial Audio Packages Feed'
       feedDownloadExternal: 'SpatialAudio-packages-test'
-      packageDownloadExternal: ${{ parameters.pacakge }}
+      packageDownloadExternal: ${{ parameters.package }}
       versionDownloadExternal: ${{ parameters.version }}
 
 
