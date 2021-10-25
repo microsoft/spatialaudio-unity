@@ -31,7 +31,7 @@ def call_cmake():
     return "cmake -G "
 
 def download_universal_package(externals_path, working_dir):
-    hrtfdsp_command = "az artifacts universal download --organization \"https://microsoft.visualstudio.com/\" --project \"8115054f-1c74-4928-a9ab-de4769e7d6ae\" --scope project --feed \"Microsoft.ProjectAcoustics.Plugins\" --name \"pa-hrtfdsp-nightly\" --version \"2.1.551\" --path " + oshelpers.fixpath(externals_path, "hrtfdsp")
+    hrtfdsp_command = "az artifacts universal download --organization \"https://dev.azure.com/aipmr/\" --feed \"SpatialAudio-packages-test\" --name \"pa-hrtfdsp\" --version \"2.1.571-prerelease\" --path " + oshelpers.fixpath(externals_path, "hrtfdsp")
     subprocess.run(hrtfdsp_command, cwd = working_dir, check = True, shell = True)
 
 def main():
