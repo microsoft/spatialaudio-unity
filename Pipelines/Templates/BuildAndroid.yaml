@@ -1,7 +1,7 @@
 parameters:
 - name: architecture
   type: string
-  default: armabi-v7a
+  default: armeabi-v7a
 - name: buildConfiguration
   type: string
   default: RelWithDebInfo

@@ -216,4 +216,14 @@ jobs:
 - template: BuildAndroid.yaml
   parameters:
     buildConfiguration: RelWithDebInfo
-    architecture: armabi-v7a
+    architecture: armeabi-v7a
+
+- template: BuildAndroid.yaml
+  parameters:
+    buildConfiguration: RelWithDebInfo
+    architecture: arm64-v8a
+
+- template: BuildAndroid.yaml
+  parameters:
+    buildConfiguration: RelWithDebInfo
+    architecture: x86
