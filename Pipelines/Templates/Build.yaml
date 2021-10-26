@@ -217,13 +217,16 @@ jobs:
   parameters:
     buildConfiguration: RelWithDebInfo
     architecture: armeabi-v7a
+    jobName: arm
 
 - template: BuildAndroid.yaml
   parameters:
     buildConfiguration: RelWithDebInfo
     architecture: arm64-v8a
+    jobName: arm64
 
 - template: BuildAndroid.yaml
   parameters:
     buildConfiguration: RelWithDebInfo
     architecture: x86
+    jobName: x86
