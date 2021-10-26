@@ -25,9 +25,6 @@ set (AUDIOPLUGIN_LINK_LIBS
     VectorMath)
 
 if (MSVC)
-    set(AUDIOPLUGIN_SRC ${AUDIOPLUGIN_SRC}
-    CircularBuffer.cpp
-    CircularBuffer.h)
 
     set(AUDIOPLUGIN_LINK_LIBS ${AUDIOPLUGIN_LINK_LIBS}
     mmdevapi.lib

@@ -1,4 +1,5 @@
-/* Copyright (c) Microsoft Corp. */
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 #pragma once
 #include "AlignedAllocator.h"
 #include "ConstVector.h"
