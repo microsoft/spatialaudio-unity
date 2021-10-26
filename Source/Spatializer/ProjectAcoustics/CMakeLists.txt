@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-project(AudioPluginMicrosoftAcoustics)
+project(AudioPluginMicrosoftSpatializerCrossPlatform)
 
 
 # Enable whole program optimization for all DLLs/EXEs

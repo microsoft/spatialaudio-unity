@@ -13,6 +13,25 @@ import oshelpers
 import stage
 import subprocess
 
+def create_unity_package(unity_path, project_dir, package_location, plugin_name, package_version):
+    git_root = oshelpers.fixpath(githelpers.get_root())
+    unity_project_full_path = oshelpers.fixpath(git_root, project_dir)
+    unity_package_full_path = oshelpers.fixpath(package_location, plugin_name + "." + package_version + ".unitypackage")
+    unity_package_creation_command = unity_path + " -BatchMode -Quit " + "-ProjectPath " + unity_project_full_path + " -ExportPackage Assets " + unity_package_full_path
+    result = subprocess.run(unity_package_creation_command)
+    print(">>>> Unity LOG <<<<")
+    editorLog = os.path.join(os.environ['userprofile'], "AppData", "Local", "Unity", "Editor", "Editor.Log")
+    with open(editorLog, 'r') as myfile:
+        data = myfile.read()
+    print(data)
+    print(editorLog)
+    if (result.returncode != 0):
+        print("Package generation failed!")
+        print(result.stdout)
+        print(result.stderr)
+    else:
+        print("Package successfully generated: " + unity_package_full_path)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-u", "--unitydir", help="Directory where Unity.exe is located")
@@ -23,9 +42,11 @@ def main():
 
     # Copy plugin binaries to project location
     if not args.stage:
-        stage.stage_binaries()
+        stage.stage_binaries_isac()
+        stage.stage_binaries_crossplatform()
     else:
-        stage.stage_binaries(args.stage)
+        stage.stage_binaries_isac(args.stage)
+        stage.stage_binaries_crossplatform(args.stage)
 
     git_root = oshelpers.fixpath(githelpers.get_root())
 
@@ -44,22 +65,8 @@ def main():
     if not os.path.isdir(unity_package_location):
         os.mkdir(unity_package_location)
 
-    unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir)
-    unity_package_full_path = oshelpers.fixpath(unity_package_location, constants.spatializer_plugin_name + "." + args.version + ".unitypackage")
-    unity_package_creation_command = unity_exe_path + " -BatchMode -Quit " + "-ProjectPath " + unity_project_full_path + " -ExportPackage Assets " + unity_package_full_path
-    result = subprocess.run(unity_package_creation_command)
-    print(">>>> Unity LOG <<<<")
-    editorLog = os.path.join(os.environ['userprofile'], "AppData", "Local", "Unity", "Editor", "Editor.Log")
-    with open(editorLog, 'r') as myfile:
-        data = myfile.read()
-    print(data)
-    print(editorLog)
-    if (result.returncode != 0):
-        print("Package generation failed!")
-        print(result.stdout)
-        print(result.stderr)
-    else:
-        print("Package successfully generated: " + unity_package_full_path)
+    create_unity_package(unity_exe_path, constants.isac_unity_project_dir, unity_package_location, constants.isac_spatializer_plugin_name, args.version)
+    create_unity_package(unity_exe_path, constants.crossplatform_unity_project_dir, unity_package_location, constants.crossplatform_spatializer_plugin_name, args.version)
 
 if __name__ == '__main__':
     main()
