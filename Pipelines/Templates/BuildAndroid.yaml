@@ -15,6 +15,7 @@ parameters:
   - Debug
   - RelWithDebInfo
 
+jobs:
 - job: Android_${{ parameters.jobName }}_${{ parameters.configuration }}
   pool:
     name: Analog-1ES-WindowsLatest
