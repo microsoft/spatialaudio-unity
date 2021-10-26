@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-- templates: BuildWindows.yaml
+- template: BuildWindows.yaml
   parameters:
     platform: Windows
     architecture: Win32
