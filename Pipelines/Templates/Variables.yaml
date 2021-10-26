@@ -7,4 +7,4 @@ variables:
     UnityVersion: 'Unity2019.4.8f1'
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
-    NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
+    NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity.HoloLens'
