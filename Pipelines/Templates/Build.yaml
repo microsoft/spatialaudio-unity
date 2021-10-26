@@ -4,37 +4,37 @@
 jobs:
 - template: BuildWindows.yaml
   parameters:
-    platform: Windows
+    platform: windows
     architecture: Win32
     configuration: RelWithDebInfo
 
 - template: BuildWindows.yaml
   parameters:
-    platform: Windows
+    platform: windows
     architecture: x64
     configuration: RelWithDebInfo
 
 - template: BuildWindows.yaml
   parameters:
-    platform: Windows
+    platform: windows
     architecture: ARM
     configuration: RelWithDebInfo
 
 - template: BuildWindows.yaml
   parameters:
-    platform: Windows
+    platform: windows
     architecture: ARM64
     configuration: RelWithDebInfo
 
 - template: BuildWindows.yaml
   parameters:
-    platform: WindowsStore
+    platform: windowsstore
     architecture: Win32
     configuration: RelWithDebInfo
 
 - template: BuildWindows.yaml
   parameters:
-    platform: WindowsStore
+    platform: windowsstore
     architecture: x64
     configuration: RelWithDebInfo
 

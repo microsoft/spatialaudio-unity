@@ -4,7 +4,7 @@
 parameters:
 - name: platform
   type: string
-  default: Windows
+  default: windows
 - name: architecture
   type: string
   default: Win32
