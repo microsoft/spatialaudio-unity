@@ -212,3 +212,13 @@ jobs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: $(Agent.JobName)
       publishLocation: 'Container'
+
+- job: Android_arm
+  displayName: Build Android
+  continueOnError: false
+  dependsOn: []
+  pool:
+    name: Analog-1ES-WindowsLatest
+    vmImage: 'windows-2019'
+  jobs:
+  - template: BuildAndroid.yaml

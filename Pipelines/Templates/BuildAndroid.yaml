@@ -1,0 +1,36 @@
+parameters:
+- name: architecture
+  type: string
+  default: armabi-v7a
+- name: buildConfiguration
+  type: string
+  default: RelWithDebInfo
+  values:
+  - Debug
+  - RelWithDebInfo
+
+jobs:
+  - job: Android_${{ parameters.buildConfiguration }}
+    dependsOn: []
+    steps:
+    - checkout: self
+      submodules: true
+      fetchDepth: 1
+    - template: DownloadPackage.yaml
+    - task: InstallPython@1
+      inputs:
+        version: 'python'
+    - task: PythonScript@0
+      displayName: 'Run CMake'
+      inputs:
+        scriptSource: 'filePath'
+        scriptPath: tools/runcmake.py
+        arguments: --platform android --android --version $(ProductVersion)
+        abortOnFail: true
+    - task: PythonScript@0
+      displayName: Build
+      inputs:
+        scriptSource: 'filePath'
+        scriptPath: tools/build.py
+        arguments: --platform android --arch ${{ parameters.architecture }} --config ${{ parameters.buildConfiguration }}
+        abortOnFail: true
