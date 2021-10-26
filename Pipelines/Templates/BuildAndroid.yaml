@@ -11,15 +11,15 @@ parameters:
 
 jobs:
   - job: Android_${{ parameters.buildConfiguration }}
+    pool:
+      name: Analog-1ES-WindowsLatest
+      vmImage: 'windows-2019'
     dependsOn: []
     steps:
     - checkout: self
       submodules: true
       fetchDepth: 1
     - template: DownloadPackage.yaml
-    - task: InstallPython@1
-      inputs:
-        version: 'python'
     - task: PythonScript@0
       displayName: 'Run CMake'
       inputs:
