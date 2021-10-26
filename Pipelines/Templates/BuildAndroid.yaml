@@ -40,3 +40,13 @@ jobs:
       scriptPath: tools/build.py
       arguments: --platform android --arch ${{ parameters.architecture }} --config ${{ parameters.configuration }}
       abortOnFail: true
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: 'build\android\${{ parameters.architecture }}\lib\${{ parameters.configuration }}'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: $(Agent.JobName)
+      publishLocation: 'Container'
