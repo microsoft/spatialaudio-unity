@@ -30,10 +30,14 @@ android_x86_debug_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=Debug", "-
 def call_cmake():
     return "cmake -G "
 
-def download_universal_package(externals_path, working_dir, download = False):
-    if (download == True):
-        hrtfdsp_command = "az artifacts universal download --organization \"https://dev.azure.com/aipmr/\" --feed \"SpatialAudio-packages-test\" --name \"pa-hrtfdsp\" --version \"2.1.571-prerelease\" --path " + oshelpers.fixpath(externals_path, "hrtfdsp")
-        subprocess.run(hrtfdsp_command, cwd = working_dir, check = True, shell = True)
+def download_universal_package(org, feed, package, version, dest):
+    command = \
+        "az artifacts universal download --organization " + org + \
+        " --feed " + feed + \
+        " --name " + package + \
+        " --version " + version + \
+        " --path " + dest
+    subprocess.run(command, cwd = githelpers.get_root(), check = True, shell = True)
 
 def main():
     parser = argparse.ArgumentParser()
@@ -74,7 +78,14 @@ def main():
     print("Creating build dirs under '%s'" %build_dir)
 
     # Download universal package dependencies
-    download_universal_package(oshelpers.fixpath(git_root, "Source", "External"), git_root, True if args.download else False)
+    if (args.download):
+        # HrtfDsp
+        download_universal_package(
+            constants.aipmr_azure_org,
+            constants.aipmr_package_feed,
+            constants.hrtfdsp_package_name,
+            constants.hrtfdsp_package_version,
+            oshelpers.fixpath(constants.externals_path, "hrtfdsp"))
 
     # Pass version (if specified) to CMake
     product_version_cmake = ''
