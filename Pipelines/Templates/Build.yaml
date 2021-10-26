@@ -220,5 +220,7 @@ jobs:
   pool:
     name: Analog-1ES-WindowsLatest
     vmImage: 'windows-2019'
-  jobs:
   - template: BuildAndroid.yaml
+    parameters:
+      buildConfiguration: RelWithDebInfo
+      architecture: armabi-v7a
