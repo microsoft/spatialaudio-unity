@@ -48,7 +48,7 @@ def stage_binaries_isac(artifacts_path = ""):
         source_dir_ARM64_uwp = oshelpers.fixpath(git_root, constants.build_root, "windowsstore", "ARM64", "bin", "relwithdebinfo")
     else:
         source_dir_x64_desktop = oshelpers.fixpath(artifacts_path, "windows_x64_relwithdebinfo")
-        source_dir_x86_desktop = oshelpers.fixpath(artifacts_path, "windows_x86_relwithdebinfo")
+        source_dir_x86_desktop = oshelpers.fixpath(artifacts_path, "Windows_Win32_relwithdebinfo")
         source_dir_x64_uwp = oshelpers.fixpath(artifacts_path, "windowsstore_x64_relwithdebinfo")
         source_dir_x86_uwp = oshelpers.fixpath(artifacts_path, "windowsstore_x86_relwithdebinfo")
         source_dir_ARM_uwp = oshelpers.fixpath(artifacts_path, "windowsstore_arm_relwithdebinfo")
@@ -83,8 +83,8 @@ def stage_binaries_crossplatform(artifacts_path = ""):
         source_dir_ARM_android = oshelpers.fixpath(git_root, constants.build_root, "Android", "armeabi-v7a", "lib", "relwithdebinfo")
         source_dir_ARM64_android = oshelpers.fixpath(git_root, constants.build_root, "Android", "arm64-v8a", "lib", "relwithdebinfo")
     else:
-        source_dir_x64_desktop = oshelpers.fixpath(artifacts_path, "windows_x64_relwithdebinfo")
-        source_dir_x86_desktop = oshelpers.fixpath(artifacts_path, "windows_x86_relwithdebinfo")
+        source_dir_x64_desktop = oshelpers.fixpath(artifacts_path, "Windows_x64_relwithdebinfo")
+        source_dir_x86_desktop = oshelpers.fixpath(artifacts_path, "Windows_Win32_relwithdebinfo")
         source_dir_x64_uwp = oshelpers.fixpath(artifacts_path, "windowsstore_x64_relwithdebinfo")
         source_dir_x86_uwp = oshelpers.fixpath(artifacts_path, "windowsstore_x86_relwithdebinfo")
         source_dir_ARM_uwp = oshelpers.fixpath(artifacts_path, "windowsstore_arm_relwithdebinfo")
