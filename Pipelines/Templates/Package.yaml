@@ -9,7 +9,7 @@ jobs:
   displayName: Generate Unity and NPM Packages
   pool:
     name: Analog On-Prem
-    demands: Unity2019.4.8f1
+    demands: Unity2019LTS
   variables:
     unityLocation: ''
   steps:
@@ -49,18 +49,18 @@ jobs:
   - task: CmdLine@2
     displayName: Copy .npmrc for Internal Feed
     inputs:
-      script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+      script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\.npmrc
   - task: npmAuthenticate@0
     displayName: Internal NPM Feed Authentication
     inputs:
-      workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+      workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\.npmrc
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
     displayName: Publish NPM Package to Internal Feed
     condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))
   - task: CmdLine@2
     displayName: Copy .npmrc for Public Feed
     inputs:
-      script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
+      script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\.npmrc
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
   - task: PublishBuildArtifacts@1
@@ -74,6 +74,6 @@ jobs:
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Build Artifacts'
     inputs:
-      PathtoPublish: '$(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\'
+      PathtoPublish: '$(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\'
       ArtifactName: 'NpmPackage'
 
