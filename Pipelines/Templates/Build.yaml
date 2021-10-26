@@ -213,14 +213,7 @@ jobs:
       ArtifactName: $(Agent.JobName)
       publishLocation: 'Container'
 
-- job: Android_arm
-  displayName: Build Android
-  continueOnError: false
-  dependsOn: []
-  pool:
-    name: Analog-1ES-WindowsLatest
-    vmImage: 'windows-2019'
-  - template: BuildAndroid.yaml
-    parameters:
-      buildConfiguration: RelWithDebInfo
-      architecture: armabi-v7a
+- template: BuildAndroid.yaml
+  parameters:
+    buildConfiguration: RelWithDebInfo
+    architecture: armabi-v7a
