@@ -10,7 +10,7 @@ parameters:
   - RelWithDebInfo
 
 jobs:
-  - job: Android_${{ parameters.buildConfiguration }}
+  - job: Android_${{ parameters.architecture }}_${{ parameters.buildConfiguration }}
     pool:
       name: Analog-1ES-WindowsLatest
       vmImage: 'windows-2019'
