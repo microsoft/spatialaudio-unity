@@ -2,6 +2,8 @@
 # Licensed under the MIT License.
 
 jobs:
+
+# Windows Flavors
 - template: BuildWindows.yaml
   parameters:
     platform: windows
@@ -16,28 +18,29 @@ jobs:
 
 - template: BuildWindows.yaml
   parameters:
-    platform: windows
+    platform: windowsstore
+    architecture: Win32
+    configuration: RelWithDebInfo
+
+- template: BuildWindows.yaml
+  parameters:
+    platform: windowsstore
+    architecture: x64
+    configuration: RelWithDebInfo
+
+- template: BuildWindows.yaml
+  parameters:
+    platform: windowsstore
     architecture: ARM
     configuration: RelWithDebInfo
 
 - template: BuildWindows.yaml
   parameters:
-    platform: windows
+    platform: windowsstore
     architecture: ARM64
     configuration: RelWithDebInfo
 
-- template: BuildWindows.yaml
-  parameters:
-    platform: windowsstore
-    architecture: Win32
-    configuration: RelWithDebInfo
-
-- template: BuildWindows.yaml
-  parameters:
-    platform: windowsstore
-    architecture: x64
-    configuration: RelWithDebInfo
-
+# Android Flavors
 - template: BuildAndroid.yaml
   parameters:
     configuration: RelWithDebInfo
