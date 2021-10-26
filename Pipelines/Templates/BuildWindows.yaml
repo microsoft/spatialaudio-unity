@@ -1,0 +1,51 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: platform
+  type: string
+  default: Windows
+- name: architecture
+  type: string
+  default: Win32
+- name: configuration
+  type: string
+  default: RelWithDebInfo
+  values:
+  - Debug
+  - RelWithDebInfo
+
+jobs:
+- job: ${{ parameters.platform }}_${{ parameters.architecture }}_${{ parameters.configuration }}
+  continueOnError: false
+  pool:
+    vmImage: 'windows-2019'
+    Demands:
+    - msbuild
+    - visualstudio
+
+  steps:
+  - script: echo Building ${{ parameters.platform }} ${{ parameters.architecture }} ${{ parameters.configuration }}
+  - checkout: self
+    submodules: true
+  - script: 'echo git submodule update --init --recursive'
+    displayName: 'Update Submodules'
+  - template: DownloadPackage.yaml
+  - script: python tools\runcmake.py --${{ parameters.platform }} --version $(ProductVersion)
+    displayName: 'Run CMake'
+  - task: MSBuild@1
+    inputs:
+      solution: 'build\${{ parameters.platform }}\${{ parameters.architecture }}\Microsoft.SpatialAudio.Unity.sln'
+      msbuildArchitecture: 'x64'
+      configuration: ${{ parameters.configuration }}
+      clean: true
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: 'build\${{ parameters.platform }}\${{ parameters.architecture }}\bin\${{ parameters.configuration }}'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: $(Agent.JobName)
+      publishLocation: 'Container'

@@ -1,232 +1,56 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-jobs:
-- job: Windows_x64_Desktop
-  continueOnError: false
-  pool:
-    vmImage: 'windows-2019'
-    Demands:
-    - msbuild
-    - visualstudio
+- templates: BuildWindows.yaml
+  parameters:
+    platform: Windows
+    architecture: Win32
+    configuration: RelWithDebInfo
 
-  steps:
-  - script: echo Building Windows x64 Desktop
-  - checkout: self
-    submodules: true
-  - script: 'echo git submodule update --init --recursive'
-    displayName: 'Update Submodules'
-  - template: DownloadPackage.yaml
-  - script: python tools\runcmake.py --windows --version $(ProductVersion)
-    displayName: 'Run CMake'
-    env:
-      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - task: MSBuild@1
-    inputs:
-      solution: 'build\windows\x64\Microsoft.SpatialAudio.Unity.sln'
-      msbuildArchitecture: 'x64'
-      configuration: 'RelWithDebInfo'
-      clean: true
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: 'build\windows\x64\bin\RelWithDebInfo'
-      Contents: '**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: $(Agent.JobName)
-      publishLocation: 'Container'
+- template: BuildWindows.yaml
+  parameters:
+    platform: Windows
+    architecture: x64
+    configuration: RelWithDebInfo
 
-- job: Windows_x86_Desktop
-  continueOnError: false
-  pool:
-    vmImage: 'windows-2019'
-    Demands:
-      - msbuild
-      - visualstudio
-  steps:
-  - script: echo Building Windows x86 Desktop
-  - checkout: self
-    submodules: true
-  - script: 'echo git submodule update --init --recursive'
-    displayName: 'Update Submodules'
-  - template: DownloadPackage.yaml
-  - script: python tools\runcmake.py --windows --version $(ProductVersion)
-    env:
-      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-    displayName: 'Run CMake'
-  - task: MSBuild@1
-    inputs:
-      solution: 'build\windows\Win32\Microsoft.SpatialAudio.Unity.sln'
-      msbuildArchitecture: 'x64'
-      configuration: 'RelWithDebInfo'
-      clean: true
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: 'build\windows\Win32\bin\RelWithDebInfo'
-      Contents: '**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: $(Agent.JobName)
-      publishLocation: 'Container'
+- template: BuildWindows.yaml
+  parameters:
+    platform: Windows
+    architecture: ARM
+    configuration: RelWithDebInfo
 
-- job: Windows_x64_UWP
-  continueOnError: false
-  pool:
-    vmImage: 'windows-2019'
-    Demands:
-      - msbuild
-      - visualstudio
-  steps:
-  - script: echo Building Windows x64 UWP
-  - checkout: self
-    submodules: true
-  - script: 'echo git submodule update --init --recursive'
-    displayName: 'Update Submodules'
-  - template: DownloadPackage.yaml
-  - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
-    displayName: 'Run CMake'
-    env:
-      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - task: MSBuild@1
-    inputs:
-      solution: 'build\WindowsStore\x64\Microsoft.SpatialAudio.Unity.sln'
-      msbuildArchitecture: 'x64'
-      configuration: 'RelWithDebInfo'
-      clean: true
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: 'build\WindowsStore\x64\bin\RelWithDebInfo'
-      Contents: '**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: $(Agent.JobName)
-      publishLocation: 'Container'
+- template: BuildWindows.yaml
+  parameters:
+    platform: Windows
+    architecture: ARM64
+    configuration: RelWithDebInfo
 
-- job: Windows_x86_UWP
-  continueOnError: false
-  pool:
-    vmImage: 'windows-2019'
-    Demands:
-      - msbuild
-      - visualstudio
-  steps:
-  - script: echo Building Windows x86 UWP
-  - checkout: self
-    submodules: true
-  - script: 'echo git submodule update --init --recursive'
-    displayName: 'Update Submodules'
-  - template: DownloadPackage.yaml
-  - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
-    displayName: 'Run CMake'
-    env:
-      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - task: MSBuild@1
-    inputs:
-      solution: 'build\WindowsStore\Win32\Microsoft.SpatialAudio.Unity.sln'
-      msbuildArchitecture: 'x64'
-      configuration: 'RelWithDebInfo'
-      clean: true
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: 'build\WindowsStore\Win32\bin\RelWithDebInfo'
-      Contents: '**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: $(Agent.JobName)
-      publishLocation: 'Container'
+- template: BuildWindows.yaml
+  parameters:
+    platform: WindowsStore
+    architecture: Win32
+    configuration: RelWithDebInfo
 
-- job: Windows_ARM_UWP
-  continueOnError: false
-  pool:
-    vmImage: 'windows-2019'
-    Demands:
-      - msbuild
-      - visualstudio
-  steps:
-  - script: echo Building Windows ARM UWP
-  - checkout: self
-    submodules: true
-  - script: 'echo git submodule update --init --recursive'
-    displayName: 'Update Submodules'
-  - template: DownloadPackage.yaml
-  - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
-    displayName: 'Run CMake'
-    env:
-      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - task: MSBuild@1
-    inputs:
-      solution: 'build\WindowsStore\ARM\Microsoft.SpatialAudio.Unity.sln'
-      msbuildArchitecture: 'x64'
-      configuration: 'RelWithDebInfo'
-      clean: true
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: 'build\WindowsStore\ARM\bin\RelWithDebInfo'
-      Contents: '**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: $(Agent.JobName)
-      publishLocation: 'Container'
-
-- job: Windows_ARM64_UWP
-  continueOnError: false
-  pool:
-    vmImage: 'windows-2019'
-    Demands:
-      - msbuild
-      - visualstudio
-  steps:
-  - script: echo Building Windows ARM64 UWP
-  - checkout: self
-    submodules: true
-  - script: 'echo git submodule update --init --recursive'
-    displayName: 'Update Submodules'
-  - template: DownloadPackage.yaml
-  - script: python tools\runcmake.py --windowsstore --version $(ProductVersion)
-    displayName: 'Run CMake'
-    env:
-      AZURE_DEVOPS_EXT_PAT: $(System.AccessToken)
-  - task: MSBuild@1
-    inputs:
-      solution: 'build\WindowsStore\ARM64\Microsoft.SpatialAudio.Unity.sln'
-      msbuildArchitecture: 'x64'
-      configuration: 'RelWithDebInfo'
-      clean: true
-  - task: CopyFiles@2
-    inputs:
-      SourceFolder: 'build\WindowsStore\ARM64\bin\RelWithDebInfo'
-      Contents: '**'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
-  - task: PublishBuildArtifacts@1
-    inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      ArtifactName: $(Agent.JobName)
-      publishLocation: 'Container'
+- template: BuildWindows.yaml
+  parameters:
+    platform: WindowsStore
+    architecture: x64
+    configuration: RelWithDebInfo
 
 - template: BuildAndroid.yaml
   parameters:
-    buildConfiguration: RelWithDebInfo
+    configuration: RelWithDebInfo
     architecture: armeabi-v7a
     jobName: arm
 
 - template: BuildAndroid.yaml
   parameters:
-    buildConfiguration: RelWithDebInfo
+    configuration: RelWithDebInfo
     architecture: arm64-v8a
     jobName: arm64
 
 - template: BuildAndroid.yaml
   parameters:
-    buildConfiguration: RelWithDebInfo
+    configuration: RelWithDebInfo
     architecture: x86
     jobName: x86

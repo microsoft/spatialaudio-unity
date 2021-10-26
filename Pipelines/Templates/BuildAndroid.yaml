@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 parameters:
 - name: jobName
   type: string
@@ -5,7 +8,7 @@ parameters:
 - name: architecture
   type: string
   default: armeabi-v7a
-- name: buildConfiguration
+- name: configuration
   type: string
   default: RelWithDebInfo
   values:
@@ -13,7 +16,7 @@ parameters:
   - RelWithDebInfo
 
 jobs:
-  - job: Android_${{ parameters.jobName }}_${{ parameters.buildConfiguration }}
+  - job: Android_${{ parameters.jobName }}_${{ parameters.configuration }}
     pool:
       name: Analog-1ES-WindowsLatest
       vmImage: 'windows-2019'
@@ -35,5 +38,5 @@ jobs:
       inputs:
         scriptSource: 'filePath'
         scriptPath: tools/build.py
-        arguments: --platform android --arch ${{ parameters.architecture }} --config ${{ parameters.buildConfiguration }}
+        arguments: --platform android --arch ${{ parameters.architecture }} --config ${{ parameters.configuration }}
         abortOnFail: true
