@@ -15,6 +15,7 @@ parameters:
   - Debug
   - RelWithDebInfo
 
+jobs:
 - job: ${{ parameters.platform }}_${{ parameters.architecture }}_${{ parameters.configuration }}
   continueOnError: false
   pool:
