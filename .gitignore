@@ -1,8 +1,10 @@
 [Ll]ibrary/
+[Ll]ogs/
 [Tt]emp/
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+[Uu]serSettings/
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory
@@ -24,6 +26,7 @@ ExportedObj/
 *.pdb
 *.opendb
 *.log
+.vsconfig
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -37,6 +40,7 @@ sysinfo.txt
 
 # No binaries
 *.dll
+*.so
 
 # Ignore VS Code settings
-.vscode/launch.json
+.vscode/*

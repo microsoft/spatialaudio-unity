@@ -1,5 +1,0 @@
-# Project Acoustics spatializer plugin
-This directory contains the source code for the Project Acoustics Unity spatializer plugin. It produces the module AudioPluginMicrosoftAcoustics.dll. To be fully functional, it also requires the Project Acoustics libraries to be present -- both **HrtfDsp.dll** and **Triton.dll**.
-These additional dependencies can be found as part of the official [Project Acoustics releases](https://docs.microsoft.com/en-us/azure/cognitive-services/acoustics/what-is-acoustics#download).
-
-For more information on how to use Project Acoustics with Unity, check out the [latest documentation](https://docs.microsoft.com/en-us/azure/cognitive-services/acoustics/unity-integration). To use your own version of AudioPluginMicrosoftAcoustics.dll with Project Acoustics, simply integrate the Project Acoustics Unity package into your application and then replace all instances of AudioPluginMicrosoftAcoustics.dll with the version that you build from this repository.

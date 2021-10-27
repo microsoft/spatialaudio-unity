@@ -10,29 +10,30 @@ endif ()
 
 set (AUDIOPLUGIN_SRC
     ${COMMON_VERSION_RC}
-    AcousticsSharedTypes.h
-    AlignedBuffers.h
     AudioPluginInterface.h
     AudioPluginUtil.cpp
     AudioPluginUtil.h
-    ConstVector.h
-    HrtfApiTypes.h
+    AudioPluginMicrosoftAcoustics.def
     HrtfConstants.h
     HrtfWrapper.cpp
     HrtfWrapper.h
     Plugin_Spatializer.cpp
     Plugin_SpatialMixer.cpp
-    PluginList.h
-    TritonApiTypes.h
-    TritonWrapper.cpp
-    TritonWrapper.h)
+    PluginList.h)
 
 set (AUDIOPLUGIN_LINK_LIBS
     VectorMath)
 
 if (MSVC)
-    set(AUDIOPLUGIN_SRC ${AUDIOPLUGIN_SRC})
-    set(AUDIOPLUGIN_LINK_LIBS ${AUDIOPLUGIN_LINK_LIBS})
+
+    set(AUDIOPLUGIN_LINK_LIBS ${AUDIOPLUGIN_LINK_LIBS}
+    mmdevapi.lib
+    windowsapp.lib
+    mfuuid.lib)
+
+    set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.lib)
+elseif (ANDROID)
+    set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/libHrtfDsp.so)
 endif()
 
 add_library (${PROJECT_NAME} SHARED ${AUDIOPLUGIN_SRC})
@@ -45,4 +46,5 @@ add_dependencies (${PROJECT_NAME}
     VectorMath)
 
 target_link_libraries (${PROJECT_NAME}
-    ${AUDIOPLUGIN_LINK_LIBS})
+    ${AUDIOPLUGIN_LINK_LIBS}
+    ${HRTFDSP_LIB})

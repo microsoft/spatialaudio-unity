@@ -3,7 +3,7 @@
 
 #include "cputype.h"
 #if defined(ARCH_X86) || defined(ARCH_X64)
-#include "vectormath.h"
+#include "VectorMath.h"
 #include "vectormath_sse2.h"
 #include <cstring>
 #include <cmath>

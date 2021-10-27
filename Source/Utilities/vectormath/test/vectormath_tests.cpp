@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 #include "gtest.h"
-#include "vectormath.h"
+#include "VectorMath.h"
 #include "vectormath_generic.h"
 #include "vectormath_test_data.h"
 #include "cputype.h"
