@@ -48,3 +48,20 @@ add_dependencies (${PROJECT_NAME}
 target_link_libraries (${PROJECT_NAME}
     ${AUDIOPLUGIN_LINK_LIBS}
     ${HRTFDSP_LIB})
+
+# Copy external dependencies
+if (WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.dll"
+        $<TARGET_FILE_DIR:AudioPluginMicrosoftSpatializerCrossPlatform>)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.pdb"
+        $<TARGET_FILE_DIR:AudioPluginMicrosoftSpatializerCrossPlatform>)
+elseif (ANDROID)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        "${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/libHrtfDsp.so"
+        $<TARGET_FILE_DIR:AudioPluginMicrosoftSpatializerCrossPlatform>)
+endif ()

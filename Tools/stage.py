@@ -14,26 +14,12 @@ def copy_file(source_file, target_dir):
     print("Copying " + source_file + " to " + target_dir)
     shutil.copy(source_file, target_dir)
 
-def copy_spatializer(spatializer_name, platform, source_dir, target_dir):
+def copy_binary(binary_name, platform, source_dir, target_dir):
     if (platform == "Windows" or platform == "WindowsStore"):
-        copy_file(oshelpers.fixpath(source_dir, spatializer_name + ".dll"), target_dir)
-        copy_file(oshelpers.fixpath(source_dir, spatializer_name + ".pdb"), target_dir)
+        copy_file(oshelpers.fixpath(source_dir, binary_name + ".dll"), target_dir)
+        copy_file(oshelpers.fixpath(source_dir, binary_name + ".pdb"), target_dir)
     else:
-        copy_file(oshelpers.fixpath(source_dir, "lib" + spatializer_name + ".so"), target_dir)
-
-def copy_external(name, platform, arch, target_path):
-    git_root = oshelpers.fixpath(githelpers.get_root())
-    platform_arch_path = oshelpers.fixpath(git_root, "Source", "External", name, platform, arch)
-    libname = name + ".dll"
-    pdbname = name + ".pdb"
-    if (platform == "Android"):
-        libname = "lib" + name + ".so"
-        pdbname = ""
-    libpath = oshelpers.fixpath(platform_arch_path, libname)
-    copy_file(libpath, target_path)
-    if (pdbname):
-        pdbpath = oshelpers.fixpath(platform_arch_path, pdbname)
-        copy_file(pdbpath, target_path)
+        copy_file(oshelpers.fixpath(source_dir, "lib" + binary_name + ".so"), target_dir)
 
 def stage_binaries_isac(artifacts_path = ""):
     git_root = oshelpers.fixpath(githelpers.get_root())
@@ -61,12 +47,12 @@ def stage_binaries_isac(artifacts_path = ""):
     target_path_ARM_uwp = oshelpers.fixpath(git_root, plugin_path_under_project, "WSA", "arm")
     target_path_ARM64_uwp = oshelpers.fixpath(git_root, plugin_path_under_project, "WSA", "arm64")
 
-    copy_spatializer(constants.isac_spatializer_name, "Windows", source_dir_x64_desktop, target_path_x64_desktop)
-    copy_spatializer(constants.isac_spatializer_name, "Windows", source_dir_x86_desktop, target_path_x86_desktop)
-    copy_spatializer(constants.isac_spatializer_name, "WindowsStore", source_dir_x64_uwp, target_path_x64_uwp)
-    copy_spatializer(constants.isac_spatializer_name, "WindowsStore", source_dir_x86_uwp, target_path_x86_uwp)
-    copy_spatializer(constants.isac_spatializer_name, "WindowsStore", source_dir_ARM_uwp, target_path_ARM_uwp)
-    copy_spatializer(constants.isac_spatializer_name, "WindowsStore", source_dir_ARM64_uwp, target_path_ARM64_uwp)
+    copy_binary(constants.isac_spatializer_name, "Windows", source_dir_x64_desktop, target_path_x64_desktop)
+    copy_binary(constants.isac_spatializer_name, "Windows", source_dir_x86_desktop, target_path_x86_desktop)
+    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_x64_uwp, target_path_x64_uwp)
+    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_x86_uwp, target_path_x86_uwp)
+    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_ARM_uwp, target_path_ARM_uwp)
+    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_ARM64_uwp, target_path_ARM64_uwp)
 
 
 def stage_binaries_crossplatform(artifacts_path = ""):
@@ -101,20 +87,20 @@ def stage_binaries_crossplatform(artifacts_path = ""):
     target_path_ARM_android = oshelpers.fixpath(git_root, plugin_path_under_project, "Android", "libs", "armeabi-v7a")
     target_path_ARM64_android = oshelpers.fixpath(git_root, plugin_path_under_project, "Android", "libs", "arm64-v8a")
 
-    copy_spatializer(constants.crossplatform_spatializer_name, "Windows", source_dir_x64_desktop, target_path_x64_desktop)
-    copy_spatializer(constants.crossplatform_spatializer_name, "Windows", source_dir_x86_desktop, target_path_x86_desktop)
-    copy_spatializer(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_x64_uwp, target_path_x64_uwp)
-    copy_spatializer(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_x86_uwp, target_path_x86_uwp)
-    copy_spatializer(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_ARM_uwp, target_path_ARM_uwp)
-    copy_spatializer(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_ARM64_uwp, target_path_ARM64_uwp)
-    copy_spatializer(constants.crossplatform_spatializer_name, "Android", source_dir_ARM_android, target_path_ARM_android)
-    copy_spatializer(constants.crossplatform_spatializer_name, "Android", source_dir_ARM64_android, target_path_ARM64_android)
+    copy_binary(constants.crossplatform_spatializer_name, "Windows", source_dir_x64_desktop, target_path_x64_desktop)
+    copy_binary(constants.crossplatform_spatializer_name, "Windows", source_dir_x86_desktop, target_path_x86_desktop)
+    copy_binary(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_x64_uwp, target_path_x64_uwp)
+    copy_binary(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_x86_uwp, target_path_x86_uwp)
+    copy_binary(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_ARM_uwp, target_path_ARM_uwp)
+    copy_binary(constants.crossplatform_spatializer_name, "WindowsStore", source_dir_ARM64_uwp, target_path_ARM64_uwp)
+    copy_binary(constants.crossplatform_spatializer_name, "Android", source_dir_ARM_android, target_path_ARM_android)
+    copy_binary(constants.crossplatform_spatializer_name, "Android", source_dir_ARM64_android, target_path_ARM64_android)
 
-    copy_external("HrtfDsp", "Windows", "x64", target_path_x64_desktop)
-    copy_external("HrtfDsp", "Windows", "Win32", target_path_x86_desktop)
-    copy_external("HrtfDsp", "WindowsStore", "Win32", target_path_x86_uwp)
-    copy_external("HrtfDsp", "WindowsStore", "x64", target_path_x64_uwp)
-    copy_external("HrtfDsp", "WindowsStore", "ARM", target_path_ARM_uwp)
-    copy_external("HrtfDsp", "WindowsStore", "ARM64", target_path_ARM64_uwp)
-    copy_external("HrtfDsp", "Android", "armeabi-v7a", target_path_ARM_android)
-    copy_external("HrtfDsp", "Android", "arm64-v8a", target_path_ARM64_android)
+    copy_binary("HrtfDsp", "Windows", source_dir_x64_desktop, target_path_x64_desktop)
+    copy_binary("HrtfDsp", "Windows", source_dir_x86_desktop, target_path_x86_desktop)
+    copy_binary("HrtfDsp", "WindowsStore", source_dir_x86_uwp, target_path_x86_uwp)
+    copy_binary("HrtfDsp", "WindowsStore", source_dir_x64_uwp, target_path_x64_uwp)
+    copy_binary("HrtfDsp", "WindowsStore", source_dir_ARM_uwp, target_path_ARM_uwp)
+    copy_binary("HrtfDsp", "WindowsStore", source_dir_ARM64_uwp, target_path_ARM64_uwp)
+    copy_binary("HrtfDsp", "Android", source_dir_ARM_android, target_path_ARM_android)
+    copy_binary("HrtfDsp", "Android", source_dir_ARM64_android, target_path_ARM64_android)
