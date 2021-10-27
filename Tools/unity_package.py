@@ -41,12 +41,8 @@ def main():
     args = parser.parse_args()
 
     # Copy plugin binaries to project location
-    if not args.stage:
-        stage.stage_binaries_isac()
-        stage.stage_binaries_crossplatform()
-    else:
-        stage.stage_binaries_isac(args.stage)
-        stage.stage_binaries_crossplatform(args.stage)
+    stage.stage_binaries_isac(args.stage)
+    stage.stage_binaries_crossplatform(args.stage)
 
     git_root = oshelpers.fixpath(githelpers.get_root())
 

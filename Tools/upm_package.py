@@ -26,10 +26,8 @@ def main():
 
     if not args.tarball:
         # Copy plugin binaries to project location
-        if not args.stage:
-            stage.stage_binaries()
-        else:
-            stage.stage_binaries(args.stage)
+        stage.stage_binaries_isac(args.stage)
+        stage.stage_binaries_crossplatform(args.stage)
 
         git_root = oshelpers.fixpath(githelpers.get_root())
 
