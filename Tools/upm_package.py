@@ -39,7 +39,7 @@ def main():
         if not os.path.isdir(npm_package_location):
             os.mkdir(npm_package_location)
 
-        unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir, "Assets", constants.isac_spatializer_plugin_name)
+        unity_project_full_path = oshelpers.fixpath(git_root, constants.isac_unity_project_dir, "Assets", constants.isac_spatializer_plugin_name)
         # Specify the package version before packing
         result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
         local_copy = False
