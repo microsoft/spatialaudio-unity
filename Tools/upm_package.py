@@ -39,7 +39,7 @@ def main():
         if not os.path.isdir(npm_package_location):
             os.mkdir(npm_package_location)
 
-        unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir, "Assets", constants.spatializer_plugin_name)
+        unity_project_full_path = oshelpers.fixpath(git_root, constants.unity_project_dir, "Assets", constants.isac_spatializer_plugin_name)
         # Specify the package version before packing
         result = subprocess.run(["cmd", "/c", "npm version", args.version, "--allow-same-version"], cwd=unity_project_full_path)
         local_copy = False
@@ -58,7 +58,7 @@ def main():
             print(result.stderr)
         else:
             if local_copy:
-                npm_package_full_path = oshelpers.fixpath(unity_project_full_path, constants.spatializer_npm_package_name + "-" + args.version + ".tgz")
+                npm_package_full_path = oshelpers.fixpath(unity_project_full_path, constants.isac_spatializer_npm_package_name + "-" + args.version + ".tgz")
                 shutil.move(npm_package_full_path, npm_package_location)
                 print("Package successfully generated: " + npm_package_full_path)
                 for file in os.listdir(npm_package_location):
