@@ -89,8 +89,8 @@ def stage_binaries_crossplatform(artifacts_path = ""):
         source_dir_x86_uwp = oshelpers.fixpath(artifacts_path, "Windowsstore_Win32_relwithdebinfo")
         source_dir_ARM_uwp = oshelpers.fixpath(artifacts_path, "Windowsstore_arm_relwithdebinfo")
         source_dir_ARM64_uwp = oshelpers.fixpath(artifacts_path, "Windowsstore_arm64_relwithdebinfo")
-        source_dir_ARM_android = oshelpers.fixpath(artifacts_path, "android_arm")
-        source_dir_ARM64_android = oshelpers.fixpath(artifacts_path, "android_arm64")
+        source_dir_ARM_android = oshelpers.fixpath(artifacts_path, "android_arm_relwithdebinfo")
+        source_dir_ARM64_android = oshelpers.fixpath(artifacts_path, "android_arm64_relwithdebinfo")
 
     target_path_x64_desktop = oshelpers.fixpath(git_root, plugin_path_under_project, "x86_64")
     target_path_x86_desktop = oshelpers.fixpath(git_root, plugin_path_under_project, "x86")
