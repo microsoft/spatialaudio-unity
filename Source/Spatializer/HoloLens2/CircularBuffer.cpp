@@ -118,18 +118,27 @@ void CircularBuffer::WriteSamples(float* sourceBuffer, uint32_t samplesToWrite, 
 
 void CircularBuffer::DropSamples(uint32_t samplesToDrop)
 {
-    // Can we skip samples in one or two parts?
-    if (m_ReadPos + samplesToDrop < m_BufferSize)
+    if (samplesToDrop > m_BufferedSamples)
     {
-        m_ReadPos += samplesToDrop;
+        m_BufferedSamples = 0;
+        m_ReadPos = 0;
+        m_WritePos = 0;
     }
     else
     {
-        uint32_t remainingSamplesToRead = samplesToDrop - (m_BufferSize - m_ReadPos);
-        m_ReadPos = remainingSamplesToRead;
-    }
+        // Can we skip samples in one or two parts?
+        if (m_ReadPos + samplesToDrop < m_BufferSize)
+        {
+            m_ReadPos += samplesToDrop;
+        }
+        else
+        {
+            uint32_t remainingSamplesToRead = samplesToDrop - (m_BufferSize - m_ReadPos);
+            m_ReadPos = remainingSamplesToRead;
+        }
 
-    m_BufferedSamples -= samplesToDrop;
+        m_BufferedSamples -= samplesToDrop;
+    }
 }
 
 uint32_t CircularBuffer::BufferedFrames()
