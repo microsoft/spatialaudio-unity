@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "CircularBuffer.h"
+#include <algorithm>
 #include <cstring>
 
 CircularBuffer::CircularBuffer(uint32_t bufferSizeInFrames, uint32_t channels)
@@ -16,14 +17,11 @@ CircularBuffer::CircularBuffer(uint32_t bufferSizeInFrames, uint32_t channels)
 
 void CircularBuffer::ReadSamples(float* destinationBuffer, uint32_t samplesToRead)
 {
+    auto bufferedSamples = m_BufferedSamples.load();
+    
     // Determine if we will underflow
-    auto bufferedSamplesToRead = samplesToRead;
-    auto zerosToRead = 0u;
-    if (samplesToRead > BufferedSamples())
-    {
-        bufferedSamplesToRead = BufferedSamples();
-        zerosToRead = samplesToRead - bufferedSamplesToRead;
-    }
+    auto bufferedSamplesToRead = std::min(samplesToRead, bufferedSamples);
+    auto zerosToRead = std::min(0u, samplesToRead - bufferedSamplesToRead);
 
     // Can we copy memory in one or two parts?
     if (bufferedSamplesToRead > 0)
@@ -60,13 +58,10 @@ void CircularBuffer::WriteSamples(float* sourceBuffer, uint32_t samplesToWrite)
 
 void CircularBuffer::WriteSamples(float* sourceBuffer, uint32_t samplesToWrite, uint32_t stride)
 {
-    // Figure out if we're about to buffer overrun
-    auto bufferedSamples = m_BufferedSamples;
-    if (bufferedSamples + samplesToWrite > m_BufferSize)
-    {
-        // We are about to overrun. Drop some samples to make room
-        DropSamples(samplesToWrite);
-    }
+    auto bufferedSamples = m_BufferedSamples.load();
+
+    // Drop samples if we're about to hit buffer overrun
+    samplesToWrite = std::min(samplesToWrite, m_BufferSize - bufferedSamples);
 
     // Can we copy memory in one or two parts?
     if (m_WritePos + samplesToWrite < m_BufferSize)

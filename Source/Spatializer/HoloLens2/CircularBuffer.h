@@ -28,7 +28,7 @@ private:
     std::unique_ptr<float[], AlignedStore::AlignedFree> m_AudioData;
     uint32_t m_ReadPos;
     uint32_t m_WritePos;
-    uint32_t m_BufferedSamples;
+    std::atomic<uint32_t> m_BufferedSamples;
     uint32_t m_BufferSize;
     uint32_t m_Channels;
 };
