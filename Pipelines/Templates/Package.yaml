@@ -25,7 +25,7 @@ jobs:
     inputs:
       targetType: 'inline'
       script:
-        $info = (Get-UnitySetupInstance | Select-UnitySetupInstance -Version $(UnityVersion)).Path + "\Editor";
+        $info = (Get-UnitySetupInstance | Select-UnitySetupInstance -Version $(Unity2019LTSver)).Path + "\Editor";
         Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
   - task: PowerShell@2
     name: SetVersionTag
