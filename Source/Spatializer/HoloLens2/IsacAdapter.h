@@ -5,6 +5,7 @@
 #include <atomic>
 #include <mfapi.h>
 #include <mmdeviceapi.h>
+#include <mutex>
 #include <SpatialAudioClient.h>
 #include <wil/resource.h>
 #include <winrt/Windows.Media.Devices.h>
@@ -47,6 +48,7 @@ private:
     bool m_IsActivated;
     uint32_t m_IsacEventsSinceLastUnityTick;
     winrt::event_token m_DeviceChangeToken;
+    std::mutex m_DeviceChangeLock;
     Microsoft::WRL::ComPtr<IRtwqInterop> m_RtwqInterop;
 };
 

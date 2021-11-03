@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 #include "CircularBuffer.h"
+#include <algorithm>
 #include <cstring>
 
 CircularBuffer::CircularBuffer(uint32_t bufferSizeInFrames, uint32_t channels)
@@ -16,14 +17,11 @@ CircularBuffer::CircularBuffer(uint32_t bufferSizeInFrames, uint32_t channels)
 
 void CircularBuffer::ReadSamples(float* destinationBuffer, uint32_t samplesToRead)
 {
+    auto bufferedSamples = m_BufferedSamples.load();
+    
     // Determine if we will underflow
-    auto bufferedSamplesToRead = samplesToRead;
-    auto zerosToRead = 0u;
-    if (samplesToRead > BufferedSamples())
-    {
-        bufferedSamplesToRead = BufferedSamples();
-        zerosToRead = samplesToRead - bufferedSamplesToRead;
-    }
+    auto bufferedSamplesToRead = std::min(samplesToRead, bufferedSamples);
+    auto zerosToRead = std::min(0u, samplesToRead - bufferedSamplesToRead);
 
     // Can we copy memory in one or two parts?
     if (bufferedSamplesToRead > 0)
@@ -60,13 +58,10 @@ void CircularBuffer::WriteSamples(float* sourceBuffer, uint32_t samplesToWrite)
 
 void CircularBuffer::WriteSamples(float* sourceBuffer, uint32_t samplesToWrite, uint32_t stride)
 {
-    // Figure out if we're about to buffer overrun
-    auto bufferedSamples = m_BufferedSamples;
-    if (bufferedSamples + samplesToWrite > m_BufferSize)
-    {
-        // We are about to overrun. Drop some samples to make room
-        DropSamples(samplesToWrite);
-    }
+    auto bufferedSamples = m_BufferedSamples.load();
+
+    // Drop samples if we're about to hit buffer overrun
+    samplesToWrite = std::min(samplesToWrite, m_BufferSize - bufferedSamples);
 
     // Can we copy memory in one or two parts?
     if (m_WritePos + samplesToWrite < m_BufferSize)
@@ -118,18 +113,27 @@ void CircularBuffer::WriteSamples(float* sourceBuffer, uint32_t samplesToWrite, 
 
 void CircularBuffer::DropSamples(uint32_t samplesToDrop)
 {
-    // Can we skip samples in one or two parts?
-    if (m_ReadPos + samplesToDrop < m_BufferSize)
+    if (samplesToDrop > m_BufferedSamples)
     {
-        m_ReadPos += samplesToDrop;
+        m_BufferedSamples = 0;
+        m_ReadPos = 0;
+        m_WritePos = 0;
     }
     else
     {
-        uint32_t remainingSamplesToRead = samplesToDrop - (m_BufferSize - m_ReadPos);
-        m_ReadPos = remainingSamplesToRead;
-    }
+        // Can we skip samples in one or two parts?
+        if (m_ReadPos + samplesToDrop < m_BufferSize)
+        {
+            m_ReadPos += samplesToDrop;
+        }
+        else
+        {
+            uint32_t remainingSamplesToRead = samplesToDrop - (m_BufferSize - m_ReadPos);
+            m_ReadPos = remainingSamplesToRead;
+        }
 
-    m_BufferedSamples -= samplesToDrop;
+        m_BufferedSamples -= samplesToDrop;
+    }
 }
 
 uint32_t CircularBuffer::BufferedFrames()
