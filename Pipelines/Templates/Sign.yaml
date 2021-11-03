@@ -4,6 +4,8 @@
 jobs:
 - job: Consolidate_Artifacts
   continueOnError: false
+  pool:
+    name: Analog-1ES-WindowsLatest
   steps:
   - task: DownloadPipelineArtifact@2
     inputs:
