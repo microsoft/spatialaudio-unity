@@ -4,6 +4,8 @@
 jobs:
 - job: Consolidate_Artifacts
   continueOnError: false
+  pool:
+    name: Analog-1ES-WindowsLatest
   steps:
   - task: DownloadPipelineArtifact@2
     inputs:
@@ -20,7 +22,7 @@ jobs:
   dependsOn: Consolidate_Artifacts
   continueOnError: false
   pool:
-    name: Package ES Lab E
+    name: Analog-1ES-WindowsLatest
   displayName: Signing Binaries
   steps:
   - script: echo Syncing Source
