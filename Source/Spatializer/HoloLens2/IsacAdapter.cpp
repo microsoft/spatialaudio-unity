@@ -177,6 +177,20 @@ void IsacAdapter::Reset()
         m_RtwqInterop->Stop();
         m_IsPlaying = false;
     }
+
+    // Clear out all existing ISAC objects and buffering
+    // Keep the sources around since the game state hasn't changed, only the audio endpoint
+    for (const auto& source : m_Sources)
+    {
+        if (source)
+        {
+            source->SetSpatialAudioObject(nullptr);
+            source->ClearBuffering();
+        }
+    }
+
+    m_DeviceIdInUse.clear();
+    m_IsActivated = false;
 }
 
 // Reacts to an audio endpoint change
@@ -184,6 +198,7 @@ HRESULT IsacAdapter::HandleDeviceChange(winrt::hstring newDeviceId)
 {
     // Don't process this device change request if we're already playing on the new device
     RETURN_HR_IF(S_OK, newDeviceId == m_DeviceIdInUse);
+	std::scoped_lock lock(m_DeviceChangeLock);
 
     Reset();
     m_IsActivated = false;
@@ -199,7 +214,6 @@ HRESULT IsacAdapter::HandleDeviceChange(winrt::hstring newDeviceId)
             ComPtr<ISpatialAudioObject> object;
             RETURN_IF_FAILED(m_SpatialAudioStream->ActivateSpatialAudioObject(AudioObjectType_Dynamic, &object));
             source->SetSpatialAudioObject(object.Get());
-            source->ClearBuffering();
         }
     }
 
@@ -209,7 +223,10 @@ HRESULT IsacAdapter::HandleDeviceChange(winrt::hstring newDeviceId)
 // Returns the next available spatial source. If none are available, returns null
 std::unique_ptr<ISpatialSource> IsacAdapter::GetSpatialSource()
 {
-    if (FAILED(Activate()))
+    std::scoped_lock lock(m_DeviceChangeLock);
+
+    // Activate if necessary
+    if (!m_IsActivated && FAILED(Activate()))
     {
         return nullptr;
     }
@@ -287,6 +304,8 @@ HRESULT UpdateSpatialAudioObject(IsacSpatialSourceInternal* source)
 // Remove any sources that have been marked for deletion
 void IsacAdapter::PruneStaleSources()
 {
+    std::scoped_lock lock(m_DeviceChangeLock);
+
     // For each source, if it is a valid source and is not active, remove it
     for (auto i = 0u; i < m_Sources.size(); i++)
     {
