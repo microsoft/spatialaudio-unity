@@ -3,6 +3,7 @@
 // Please note that this will only work on Unity 5.2 or higher.
 
 #include "AudioPluginUtil.h"
+#include "HelperMacros.h"
 #include "HrtfWrapper.h"
 #include "VectorMath.h"
 #include "mathutility.h"
@@ -77,14 +78,12 @@ namespace Spatializer
         return UNITY_AUDIODSP_OK;
     }
 
-    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK
-    SetFloatParameterCallback(UnityAudioEffectState*, int, float)
+    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(UnityAudioEffectState*, int, float)
     {
         return UNITY_AUDIODSP_OK;
     }
 
-    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK
-    GetFloatParameterCallback(UnityAudioEffectState*, int, float*, char*)
+    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(UnityAudioEffectState*, int, float*, char*)
     {
         return UNITY_AUDIODSP_OK;
     }
@@ -108,7 +107,7 @@ namespace Spatializer
     }
 
     // Update acoustic params with default values
-    void UpdateAcousticParams(const EffectData* data, const float /*spread*/, const ATKVectorF direction)
+    void UpdateAcousticParams(const EffectData* data, const ATKVectorF direction)
     {
         if (data->EffectHrtfInfo)
         {
@@ -174,32 +173,21 @@ namespace Spatializer
     bool ShouldSpatialize(UnityAudioEffectState* state)
     {
         // state data and SpatializerData are required.
-        if (state == nullptr || state->spatializerdata == nullptr)
-        {
-            return false;
-        }
+        RETURN_FALSE_IF_TRUE(state == nullptr || state->spatializerdata == nullptr);
 
         // DSP buffer size must be a power of two aligned and smaller than HRTF quantum.
         // This ensures even multiples fit inside a single HRTF pass for buffering.
-        if (!IsPowerOfTwo(state->dspbuffersize) || state->dspbuffersize > c_HrtfFrameCount)
-        {
-            return false;
-        }
+        RETURN_FALSE_IF_TRUE(!IsPowerOfTwo(state->dspbuffersize) || state->dspbuffersize > c_HrtfFrameCount);
 
         // Stream must be marked IsPlaying, Not Paused, Not Muted, and spatial blend meaningfully > 0
-        if (!(state->flags & UnityAudioEffectStateFlags_IsPlaying) ||
+        RETURN_FALSE_IF_TRUE(
+            !(state->flags & UnityAudioEffectStateFlags_IsPlaying) ||
             (state->flags & UnityAudioEffectStateFlags_IsPaused) ||
-            (state->flags & UnityAudioEffectStateFlags_IsMuted) || state->spatializerdata->spatialblend <= 0.001f)
-        {
-            return false;
-        }
+            (state->flags & UnityAudioEffectStateFlags_IsMuted) || (state->spatializerdata->spatialblend <= 0.001f));
 
         // Do not spatialize if the EffectData is missing, or if the source is too quiet
         auto data = state->GetEffectData<EffectData>();
-        if (data == nullptr || data->DryDistanceAttenuation <= c_MinAudibleGain)
-        {
-            return false;
-        }
+        RETURN_FALSE_IF_TRUE(data == nullptr || data->DryDistanceAttenuation <= c_MinAudibleGain);
 
         // For all other cases, we should spatialize this stream
         return true;
@@ -209,11 +197,8 @@ namespace Spatializer
         UnityAudioEffectState* state, float* inbuffer, float* outbuffer, unsigned int length, int inChannels,
         int outChannels)
     {
-        if (inChannels != outChannels)
-        {
-            // Don't need to support this because it doesn't seem this scenario exists in the Unity audio engine
-            return UNITY_AUDIODSP_ERR_UNSUPPORTED;
-        }
+        // Don't need to support this because it doesn't seem this scenario exists in the Unity audio engine
+        RETURN_RESULT_IF_TRUE(inChannels != outChannels, UNITY_AUDIODSP_ERR_UNSUPPORTED);
 
         auto data = state->GetEffectData<EffectData>();
 
@@ -255,7 +240,7 @@ namespace Spatializer
         }
 
         // There's no acoustics support yet, update params using a through-the-wall method
-        UpdateAcousticParams(data, state->spatializerdata->spread, ListenerToSourceDirection(S, L));
+        UpdateAcousticParams(data, ListenerToSourceDirection(S, L));
 
         // Sometimes, the previous allocation can fail and produce a SourceBuffer with a null array
         // Make sure we have a buffer to use before proceeding

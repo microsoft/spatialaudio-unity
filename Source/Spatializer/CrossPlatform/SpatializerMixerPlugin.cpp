@@ -59,14 +59,12 @@ namespace SpatialMixer
         return UNITY_AUDIODSP_OK;
     }
 
-    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK
-    SetFloatParameterCallback(UnityAudioEffectState*, int, float)
+    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK SetFloatParameterCallback(UnityAudioEffectState*, int, float)
     {
         return UNITY_AUDIODSP_OK;
     }
 
-    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK
-    GetFloatParameterCallback(UnityAudioEffectState*, int, float*, char*)
+    UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK GetFloatParameterCallback(UnityAudioEffectState*, int, float*, char*)
     {
         return UNITY_AUDIODSP_OK;
     }
@@ -76,7 +74,6 @@ namespace SpatialMixer
         return UNITY_AUDIODSP_OK;
     }
 
-
     UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK ProcessCallback(
         UnityAudioEffectState* state, float* inBuffer, float* outBuffer, unsigned int length, int inChannels,
         int outChannels)
@@ -84,8 +81,7 @@ namespace SpatialMixer
         // Check that I/O formats are right and that the host API supports this feature
         if (!(state->flags & UnityAudioEffectStateFlags_IsPlaying) ||
             (state->flags & UnityAudioEffectStateFlags_IsPaused) ||
-            (state->flags & UnityAudioEffectStateFlags_IsMuted) ||
-            !IsPowerOfTwo(state->dspbuffersize) ||
+            (state->flags & UnityAudioEffectStateFlags_IsMuted) || !IsPowerOfTwo(state->dspbuffersize) ||
             state->dspbuffersize > c_HrtfFrameCount || state->dspbuffersize != length)
         {
             std::memcpy(outBuffer, inBuffer, length * outChannels * sizeof(float));

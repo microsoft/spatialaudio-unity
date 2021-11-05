@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#include "HelperMacros.h"
 #include "HrtfWrapper.h"
 #include <exception>
 #include <cstring>
@@ -25,19 +26,14 @@ HrtfWrapper::SourceInfo::~SourceInfo()
 
 void HrtfWrapper::InitWrapper()
 {
-    if (!HrtfWrapper::s_HrtfWrapper)
-    {
-        HrtfWrapper::s_HrtfWrapper.reset(new HrtfWrapper());
-    }
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper);
+    HrtfWrapper::s_HrtfWrapper.reset(new HrtfWrapper());
 }
 
 bool HrtfWrapper::SourceInfo::SetParameters(HrtfAcousticParameters* params) const noexcept
 {
-    if (HrtfWrapper::s_HrtfWrapper)
-    {
-        return HrtfWrapper::s_HrtfWrapper->SetParameters(m_SourceIndex, params);
-    }
-    return false;
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper, false);
+    return HrtfWrapper::s_HrtfWrapper->SetParameters(m_SourceIndex, params);
 }
 
 float* HrtfWrapper::SourceInfo::GetBuffer() const noexcept
@@ -52,16 +48,14 @@ uint32_t HrtfWrapper::SourceInfo::GetIndex() const noexcept
 
 HrtfWrapper::SourceInfo* HrtfWrapper::GetHrtfSource()
 {
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper, nullptr);
     return HrtfWrapper::s_HrtfWrapper->GetAvailableHrtfSource();
 }
 
 uint32_t HrtfWrapper::Process(float* outputBuffer, uint32_t numSamples, uint32_t numChannels) noexcept
 {
-    if (HrtfWrapper::s_HrtfWrapper)
-    {
-        return HrtfWrapper::s_HrtfWrapper->ProcessHrtfs(outputBuffer, numSamples, numChannels);
-    }
-    return 0;
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper, 0);
+    return HrtfWrapper::s_HrtfWrapper->ProcessHrtfs(outputBuffer, numSamples, numChannels);
 }
 
 HrtfWrapper::HrtfWrapper()
@@ -73,13 +67,13 @@ HrtfWrapper::HrtfWrapper()
         buffer.Length = 0;
     }
 
-    if (!HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_Flex, c_HrtfFrameCount, &m_FlexEngine))
-    {
-        throw std::bad_alloc();
-    }
+    THROW_IF_FALSE(
+        HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_Flex, c_HrtfFrameCount, &m_FlexEngine), std::bad_alloc);
 
-    m_CurrentFormat = HrtfOutputFormat_Stereo;
-    m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_FlexEngine.Get(), m_CurrentFormat);
+    THROW_IF_FALSE(
+        HrtfEngineSetOutputFormat(m_FlexEngine.Get(), HrtfOutputFormat_Stereo),
+        std::runtime_error,
+        "Failure setting output format");
 }
 
 HrtfWrapper::SourceInfo* HrtfWrapper::GetAvailableHrtfSource()
@@ -95,7 +89,6 @@ HrtfWrapper::SourceInfo* HrtfWrapper::GetAvailableHrtfSource()
                 std::memset(m_SampleBuffers[i].Data, 0, c_HrtfFrameCount * sizeof(float));
                 m_HrtfInputBuffers[i].Buffer = m_SampleBuffers[i].Data;
                 m_HrtfInputBuffers[i].Length = c_HrtfFrameCount;
-
                 return new HrtfWrapper::SourceInfo(i, &m_HrtfInputBuffers[i]);
             }
         }
@@ -109,51 +102,10 @@ void HrtfWrapper::ReleaseSource(uint32_t sourceIndex)
     HrtfEngineReleaseResourcesForSource(m_FlexEngine.Get(), sourceIndex);
 }
 
-HrtfOutputFormat GetFormatFromChannels(uint32_t numChannels)
-{
-    if (numChannels == 1)
-    {
-        return HrtfOutputFormat_Mono;
-    }
-    else if (numChannels == 2)
-    {
-        return HrtfOutputFormat_Stereo;
-    }
-    else if (numChannels == 4)
-    {
-        return HrtfOutputFormat_Quad;
-    }
-    else if (numChannels == 5)
-    {
-        return HrtfOutputFormat_5;
-    }
-    else if (numChannels == 6)
-    {
-        return HrtfOutputFormat_5dot1;
-    }
-    else if (numChannels == 8)
-    {
-        return HrtfOutputFormat_7dot1;
-    }
-    return HrtfOutputFormat_Count;
-}
-
 uint32_t HrtfWrapper::ProcessHrtfs(float* outputBuffer, uint32_t numSamples, uint32_t numChannels) noexcept
 {
-    auto thisFormat = GetFormatFromChannels(numChannels);
-    if (thisFormat != m_CurrentFormat)
-    {
-        m_CurrentFormat = thisFormat;
-        m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_FlexEngine.Get(), thisFormat);
-    }
-
-    if (!m_CurrentFormatSupported)
-    {
-        return 0;
-    }
-
-    auto retVal =
-        HrtfEngineProcess(m_FlexEngine.Get(), m_HrtfInputBuffers, c_HrtfMaxSources, outputBuffer, numSamples * numChannels);
+    auto retVal = HrtfEngineProcess(
+        m_FlexEngine.Get(), m_HrtfInputBuffers, c_HrtfMaxSources, outputBuffer, numSamples * numChannels);
 
     // We've consumed all the audio data for this pass. Clear out the input buffers
     for (auto i = 0u; i < c_HrtfMaxSources; ++i)
@@ -182,32 +134,24 @@ void ResetSources(ObjectHandle engine, const HrtfInputBuffer* buffers, uint32_t 
 
 void HrtfWrapper::SetGlobalReverbPowerAdjustment(float power)
 {
-    if (HrtfWrapper::s_HrtfWrapper)
-    {
-        s_HrtfWrapper->m_GlobalReverbPower = power;
-    }
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper);
+    HrtfWrapper::s_HrtfWrapper->m_GlobalReverbPower = power;
 }
+
 float HrtfWrapper::GetGlobalReverbPowerAdjustment()
 {
-    if (HrtfWrapper::s_HrtfWrapper)
-    {
-        return s_HrtfWrapper->m_GlobalReverbPower;
-    }
-    return 0;
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper, 0);
+    return HrtfWrapper::s_HrtfWrapper->m_GlobalReverbPower;
 }
 
 void HrtfWrapper::SetGlobalReverbTimeAdjustment(float time)
 {
-    if (HrtfWrapper::s_HrtfWrapper)
-    {
-        s_HrtfWrapper->m_GlobalReverbTime = time;
-    }
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper);
+    HrtfWrapper::s_HrtfWrapper->m_GlobalReverbTime = time;
 }
+
 float HrtfWrapper::GetGlobalReverbTimeAdjustment()
 {
-    if (HrtfWrapper::s_HrtfWrapper)
-    {
-        return s_HrtfWrapper->m_GlobalReverbTime;
-    }
-    return 0;
+    RETURN_RESULT_IF_NULL(HrtfWrapper::s_HrtfWrapper, 0);
+    return s_HrtfWrapper->m_GlobalReverbTime;
 }
