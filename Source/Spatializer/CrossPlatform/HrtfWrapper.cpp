@@ -73,28 +73,13 @@ HrtfWrapper::HrtfWrapper()
         buffer.Length = 0;
     }
 
-    bool result = HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_Binaural, c_HrtfFrameCount, &m_BinauralEngine);
-    if (!result)
+    if (!HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_Flex, c_HrtfFrameCount, &m_FlexEngine))
     {
         throw std::bad_alloc();
     }
 
-    result = HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_Panner, c_HrtfFrameCount, &m_PanningEngine);
-    if (!result)
-    {
-        throw std::bad_alloc();
-    }
-
-    result = HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_Flex, c_HrtfFrameCount, &m_FlexEngine);
-    if (!result)
-    {
-        throw std::bad_alloc();
-    }
-
-    m_ActiveEngine = m_BinauralEngine.Get();
-    m_ActiveEngineType = HrtfEngineType_Binaural;
     m_CurrentFormat = HrtfOutputFormat_Stereo;
-    m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_ActiveEngine, m_CurrentFormat);
+    m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_FlexEngine.Get(), m_CurrentFormat);
 }
 
 HrtfWrapper::SourceInfo* HrtfWrapper::GetAvailableHrtfSource()
@@ -105,25 +90,13 @@ HrtfWrapper::SourceInfo* HrtfWrapper::GetAvailableHrtfSource()
         // Otherwise, keep trying the next indices
         if (m_HrtfInputBuffers[i].Buffer == nullptr)
         {
-            if (HrtfEngineAcquireResourcesForSource(m_BinauralEngine.Get(), i))
+            if (HrtfEngineAcquireResourcesForSource(m_FlexEngine.Get(), i))
             {
-                if (HrtfEngineAcquireResourcesForSource(m_PanningEngine.Get(), i))
-                {
-                    if (HrtfEngineAcquireResourcesForSource(m_FlexEngine.Get(), i))
-                    {
-                        std::memset(m_SampleBuffers[i].Data, 0, c_HrtfFrameCount * sizeof(float));
-                        m_HrtfInputBuffers[i].Buffer = m_SampleBuffers[i].Data;
-                        m_HrtfInputBuffers[i].Length = c_HrtfFrameCount;
+                std::memset(m_SampleBuffers[i].Data, 0, c_HrtfFrameCount * sizeof(float));
+                m_HrtfInputBuffers[i].Buffer = m_SampleBuffers[i].Data;
+                m_HrtfInputBuffers[i].Length = c_HrtfFrameCount;
 
-                        return new HrtfWrapper::SourceInfo(i, &m_HrtfInputBuffers[i]);
-                    }
-                    else
-                    {
-                        // If successfully acquired in one engine but failed in the other, release
-                        // the acquired resources
-                        HrtfEngineReleaseResourcesForSource(m_BinauralEngine.Get(), i);
-                    }
-                }
+                return new HrtfWrapper::SourceInfo(i, &m_HrtfInputBuffers[i]);
             }
         }
     }
@@ -133,8 +106,6 @@ HrtfWrapper::SourceInfo* HrtfWrapper::GetAvailableHrtfSource()
 
 void HrtfWrapper::ReleaseSource(uint32_t sourceIndex)
 {
-    HrtfEngineReleaseResourcesForSource(m_BinauralEngine.Get(), sourceIndex);
-    HrtfEngineReleaseResourcesForSource(m_PanningEngine.Get(), sourceIndex);
     HrtfEngineReleaseResourcesForSource(m_FlexEngine.Get(), sourceIndex);
 }
 
@@ -173,7 +144,7 @@ uint32_t HrtfWrapper::ProcessHrtfs(float* outputBuffer, uint32_t numSamples, uin
     if (thisFormat != m_CurrentFormat)
     {
         m_CurrentFormat = thisFormat;
-        m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_ActiveEngine, thisFormat);
+        m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_FlexEngine.Get(), thisFormat);
     }
 
     if (!m_CurrentFormatSupported)
@@ -182,7 +153,7 @@ uint32_t HrtfWrapper::ProcessHrtfs(float* outputBuffer, uint32_t numSamples, uin
     }
 
     auto retVal =
-        HrtfEngineProcess(m_ActiveEngine, m_HrtfInputBuffers, c_HrtfMaxSources, outputBuffer, numSamples * numChannels);
+        HrtfEngineProcess(m_FlexEngine.Get(), m_HrtfInputBuffers, c_HrtfMaxSources, outputBuffer, numSamples * numChannels);
 
     // We've consumed all the audio data for this pass. Clear out the input buffers
     for (auto i = 0u; i < c_HrtfMaxSources; ++i)
@@ -195,15 +166,7 @@ uint32_t HrtfWrapper::ProcessHrtfs(float* outputBuffer, uint32_t numSamples, uin
 
 bool HrtfWrapper::SetParameters(uint32_t index, HrtfAcousticParameters* params) noexcept
 {
-    return HrtfEngineSetParametersForSource(m_ActiveEngine, index, params);
-}
-
-void HrtfWrapper::SetActiveEngine(HrtfEngineType engineType) noexcept
-{
-    if (s_HrtfWrapper)
-    {
-        s_HrtfWrapper->SetActiveEngineType(engineType);
-    }
+    return HrtfEngineSetParametersForSource(m_FlexEngine.Get(), index, params);
 }
 
 void ResetSources(ObjectHandle engine, const HrtfInputBuffer* buffers, uint32_t numBuffers)
@@ -214,34 +177,6 @@ void ResetSources(ObjectHandle engine, const HrtfInputBuffer* buffers, uint32_t 
         {
             HrtfEngineResetSource(engine, source);
         }
-    }
-}
-
-void HrtfWrapper::SetActiveEngineType(HrtfEngineType engineType) noexcept
-{
-    if (engineType != m_ActiveEngineType)
-    {
-        if (engineType == HrtfEngineType_Binaural)
-        {
-            ResetSources(m_BinauralEngine.Get(), m_HrtfInputBuffers, c_HrtfMaxSources);
-            m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_BinauralEngine.Get(), m_CurrentFormat);
-            m_ActiveEngine = m_BinauralEngine.Get();
-        }
-        else if (engineType == HrtfEngineType_Flex)
-        {
-            ResetSources(m_FlexEngine.Get(), m_HrtfInputBuffers, c_HrtfMaxSources);
-            m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_FlexEngine.Get(), m_CurrentFormat);
-            m_ActiveEngine = m_FlexEngine.Get();
-        }
-        else
-        {
-            // PanningEngine does not have many per-source resources. It does have per-filter resources,
-            // which can only be reset when all sources do.
-            HrtfEngineResetAllSources(m_PanningEngine.Get());
-            m_CurrentFormatSupported = HrtfEngineSetOutputFormat(m_PanningEngine.Get(), m_CurrentFormat);
-            m_ActiveEngine = m_PanningEngine.Get();
-        }
-        m_ActiveEngineType = engineType;
     }
 }
 

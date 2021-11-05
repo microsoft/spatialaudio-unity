@@ -17,8 +17,8 @@ set (AUDIOPLUGIN_SRC
     HrtfConstants.h
     HrtfWrapper.cpp
     HrtfWrapper.h
-    Plugin_Spatializer.cpp
-    Plugin_SpatialMixer.cpp
+    SpatializerPlugin.cpp
+    SpatializerMixerPlugin.cpp
     PluginList.h)
 
 set (AUDIOPLUGIN_LINK_LIBS

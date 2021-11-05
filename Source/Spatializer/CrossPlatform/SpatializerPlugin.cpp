@@ -16,12 +16,6 @@ namespace Spatializer
 {
     enum EffectParams
     {
-        AdditionalReverbPower,
-        DecayTimeScalar,
-        OcclusionFactor,
-        DistanceWarp,
-        OutdoornessAdjustment,
-        HrtfMode,
         Count
     };
 
@@ -30,75 +24,12 @@ namespace Spatializer
         std::unique_ptr<HrtfWrapper::SourceInfo> EffectHrtfInfo;
         float SourceDistance;
         float DryDistanceAttenuation;
-        float Params[EffectParams::Count];
     };
 
     int InternalRegisterEffectDefinition(UnityAudioEffectDefinition& definition)
     {
         definition.flags |= UnityAudioEffectDefinitionFlags_IsSpatializer;
-
-        int numparams = EffectParams::Count;
-        definition.paramdefs = new UnityAudioParameterDefinition[numparams];
-        // Warning: The 'name' value (second argument) below has a strict limit of 15 characters
-        RegisterParameter(
-            definition,
-            "ReverbAdjust",
-            "dB",
-            -20.0f,
-            20.0f,
-            0.0f,
-            1.0f,
-            1.0f,
-            EffectParams::AdditionalReverbPower,
-            "Reverb Power Adjustment");
-        RegisterParameter(
-            definition,
-            "RT60Scale",
-            "",
-            0.0f,
-            2.0f,
-            1.0f,
-            1.0f,
-            1.0f,
-            EffectParams::DecayTimeScalar,
-            "Reverb Time Scale Factor");
-        RegisterParameter(
-            definition,
-            "Hrtf Mode",
-            "",
-            0.0f,
-            3.0f,
-            1.0f,
-            1.0f,
-            1.0f,
-            EffectParams::HrtfMode,
-            "Set FLEX mode. 0: no spatialization, 1: high quality, 2: medium quality, 3: low quality");
-        RegisterParameter(
-            definition,
-            "OcclusionFactor",
-            "",
-            0.0f,
-            c_MaxOcclusionFactor,
-            1.0f,
-            1.0f,
-            1.0f,
-            EffectParams::OcclusionFactor,
-            "Occlusion Scaling");
-        RegisterParameter(
-            definition, "DistanceWarp", "", 0.1f, 2.0f, 1.0f, 1.0f, 1.0f, EffectParams::DistanceWarp, "Distance Warp");
-        RegisterParameter(
-            definition,
-            "OutdoorAdjust",
-            "",
-            -1.0f,
-            1.0f,
-            0.0f,
-            1.0f,
-            1.0f,
-            EffectParams::OutdoornessAdjustment,
-            "Outdoorness Adjustment");
-
-        return numparams;
+        return 0;
     }
 
     static UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK DistanceAttenuationCallback(
@@ -126,12 +57,6 @@ namespace Spatializer
         std::memset(effectdata, 0, sizeof(EffectData));
         state->effectdata = effectdata;
         state->spatializerdata->distanceattenuationcallback = DistanceAttenuationCallback;
-        InitParametersFromDefinitions(InternalRegisterEffectDefinition, effectdata->Params);
-        effectdata->Params[EffectParams::AdditionalReverbPower] = 0;
-        effectdata->Params[EffectParams::DecayTimeScalar] = 1;
-        effectdata->Params[EffectParams::HrtfMode] = 1;
-        effectdata->Params[EffectParams::OcclusionFactor] = 1;
-        effectdata->Params[EffectParams::OutdoornessAdjustment] = 0;
 
         HrtfWrapper::InitWrapper();
 
@@ -153,54 +78,20 @@ namespace Spatializer
     }
 
     UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK
-    SetFloatParameterCallback(UnityAudioEffectState* state, int index, float value)
+    SetFloatParameterCallback(UnityAudioEffectState*, int, float)
     {
-        auto data = state->GetEffectData<EffectData>();
-        if (index >= EffectParams::Count)
-        {
-            return UNITY_AUDIODSP_ERR_UNSUPPORTED;
-        }
-        data->Params[index] = value;
         return UNITY_AUDIODSP_OK;
     }
 
     UNITY_AUDIODSP_RESULT UNITY_AUDIODSP_CALLBACK
-    GetFloatParameterCallback(UnityAudioEffectState* state, int index, float* value, char* valuestr)
+    GetFloatParameterCallback(UnityAudioEffectState*, int, float*, char*)
     {
-        auto data = state->GetEffectData<EffectData>();
-        if (index >= EffectParams::Count)
-        {
-            return UNITY_AUDIODSP_ERR_UNSUPPORTED;
-        }
-        if (value != nullptr)
-        {
-            *value = data->Params[index];
-        }
-        if (valuestr != nullptr)
-        {
-            // it appears that unity isn't currently supporting this parameter
-            valuestr[0] = 0;
-        }
         return UNITY_AUDIODSP_OK;
     }
 
     int UNITY_AUDIODSP_CALLBACK GetFloatBufferCallback(UnityAudioEffectState*, const char*, float*, int)
     {
         return UNITY_AUDIODSP_OK;
-    }
-
-    static constexpr float DegToRadian = float(3.14159265358979323846) / 180.0f;
-    ATKVectorF PolarToCartesian(const float Azimuth, const float Elevation)
-    {
-        ATKVectorF retVal;
-        const auto el = Elevation * DegToRadian;
-        const auto az = Azimuth * DegToRadian;
-        retVal.z = cos(el);
-        const auto horiz = sin(el);
-        retVal.x = horiz * cos(az);
-        retVal.y = horiz * sin(az);
-
-        return retVal;
     }
 
     static ATKVectorF ListenerToSourceDirection(const float* sourceMatrix, const float* listenerMatrix)
@@ -231,35 +122,11 @@ namespace Spatializer
             acousticParams.EffectiveSourceDistance = data->SourceDistance;
 
             // Start with default reverb power, then scale by distance and user parameters
-            acousticParams.EarlyReflectionsPowerDb =
-                c_DefaultEarlyReflectionsPowerDb + AmplitudeToDb(data->DryDistanceAttenuation) +
-                data->Params[EffectParams::AdditionalReverbPower] + HrtfWrapper::GetGlobalReverbPowerAdjustment();
-            acousticParams.EarlyReflections60DbDecaySeconds = c_DefaultEarlyReflections60DbDecaySeconds *
-                                                              data->Params[EffectParams::DecayTimeScalar] *
-                                                              HrtfWrapper::GetGlobalReverbTimeAdjustment();
-            acousticParams.LateReverb60DbDecaySeconds = c_DefaultLateReverb60DbDecaySeconds *
-                                                        data->Params[EffectParams::DecayTimeScalar] *
-                                                        HrtfWrapper::GetGlobalReverbTimeAdjustment();
-
-            // Not using acoustics, so start with an outdoorness of 0.5 and adjust from there
-            auto adjustedOutdoorness = 0.5f + data->Params[EffectParams::OutdoornessAdjustment];
-            acousticParams.Outdoorness = Clamp(adjustedOutdoorness, 0, 1);
-
-            unsigned long hrtfMode = 0;
-            if (data->Params[EffectParams::HrtfMode] == 1.0f)
-            {
-                hrtfMode = HrtfDspMode_Quality1;
-            }
-            else if (data->Params[EffectParams::HrtfMode] == 2.0f)
-            {
-                hrtfMode = HrtfDspMode_Quality2;
-            }
-            else if (data->Params[EffectParams::HrtfMode] == 3.0f)
-            {
-                hrtfMode = HrtfDspMode_Quality3;
-            }
-
-            acousticParams.HrtfMode = static_cast<HrtfDspMode>(hrtfMode);
+            acousticParams.EarlyReflectionsPowerDb = -100.0f;
+            acousticParams.EarlyReflections60DbDecaySeconds = 0.0f;
+            acousticParams.LateReverb60DbDecaySeconds = 0.0f;
+            acousticParams.Outdoorness = 0.0f;
+            acousticParams.HrtfMode = static_cast<HrtfDspMode>(HrtfDspMode_Quality1);
 
             data->EffectHrtfInfo->SetParameters(&acousticParams);
         }
