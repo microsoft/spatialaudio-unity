@@ -13,7 +13,6 @@ set (AUDIOPLUGIN_SRC
     AudioPluginInterface.h
     AudioPluginUtil.cpp
     AudioPluginUtil.h
-    AudioPluginMicrosoftAcoustics.def
     HrtfConstants.h
     HrtfWrapper.cpp
     HrtfWrapper.h
@@ -21,16 +20,7 @@ set (AUDIOPLUGIN_SRC
     SpatializerMixerPlugin.cpp
     PluginList.h)
 
-set (AUDIOPLUGIN_LINK_LIBS
-    VectorMath)
-
 if (MSVC)
-
-    set(AUDIOPLUGIN_LINK_LIBS ${AUDIOPLUGIN_LINK_LIBS}
-    mmdevapi.lib
-    windowsapp.lib
-    mfuuid.lib)
-
     set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.lib)
 elseif (ANDROID)
     set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/libHrtfDsp.so)
@@ -46,7 +36,7 @@ add_dependencies (${PROJECT_NAME}
     VectorMath)
 
 target_link_libraries (${PROJECT_NAME}
-    ${AUDIOPLUGIN_LINK_LIBS}
+    VectorMath
     ${HRTFDSP_LIB})
 
 # Copy external dependencies

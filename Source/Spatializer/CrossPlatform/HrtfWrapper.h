@@ -6,6 +6,7 @@
 #include "HrtfApi.h"
 #include "HrtfConstants.h"
 #include <memory>
+#include <stack>
 
 class HrtfWrapper final
 {
@@ -31,10 +32,6 @@ public:
     static void InitWrapper();
     static SourceInfo* GetHrtfSource();
     static uint32_t Process(float* outputBuffer, uint32_t numSamples, uint32_t numChannels) noexcept;
-    static void SetGlobalReverbPowerAdjustment(float power);
-    static float GetGlobalReverbPowerAdjustment();
-    static void SetGlobalReverbTimeAdjustment(float time);
-    static float GetGlobalReverbTimeAdjustment();
 
     friend class SourceInfo;
 
@@ -51,6 +48,7 @@ private:
     AlignedStore::AlignedBuffers<float> m_SampleBuffers;
     HrtfInputBuffer m_HrtfInputBuffers[c_HrtfMaxSources];
     HrtfEngineHandle m_FlexEngine;
+    std::stack<unsigned char> m_AvailableProcessingSlots;
 
     float m_GlobalReverbPower;
     float m_GlobalReverbTime;

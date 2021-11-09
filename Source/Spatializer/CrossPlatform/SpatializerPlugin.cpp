@@ -3,7 +3,6 @@
 // Please note that this will only work on Unity 5.2 or higher.
 
 #include "AudioPluginUtil.h"
-#include "HelperMacros.h"
 #include "HrtfWrapper.h"
 #include "VectorMath.h"
 #include "mathutility.h"
@@ -15,11 +14,6 @@
 
 namespace Spatializer
 {
-    enum EffectParams
-    {
-        Count
-    };
-
     struct EffectData
     {
         std::unique_ptr<HrtfWrapper::SourceInfo> EffectHrtfInfo;
@@ -58,7 +52,7 @@ namespace Spatializer
         std::memset(effectdata, 0, sizeof(EffectData));
         state->effectdata = effectdata;
         state->spatializerdata->distanceattenuationcallback = DistanceAttenuationCallback;
-
+        InitParametersFromDefinitions(InternalRegisterEffectDefinition, nullptr);
         HrtfWrapper::InitWrapper();
 
         effectdata->EffectHrtfInfo.reset(HrtfWrapper::GetHrtfSource());
@@ -113,7 +107,7 @@ namespace Spatializer
         {
             HrtfAcousticParameters acousticParams = {};
             acousticParams.PrimaryArrivalDirection = direction;
-            acousticParams.PrimaryArrivalGeometryPowerDb = 0.0f;
+            acousticParams.PrimaryArrivalGeometryPowerDb = c_DefaultPrimaryArrivalGeometryPowerDb;
             acousticParams.PrimaryArrivalDistancePowerDb = AmplitudeToDb(data->DryDistanceAttenuation);
             // Disable DSP for secondary arrival
             acousticParams.SecondaryArrivalDirection = {0, 0, 0};
@@ -121,10 +115,10 @@ namespace Spatializer
             acousticParams.EffectiveSourceDistance = data->SourceDistance;
 
             // Start with default reverb power, then scale by distance and user parameters
-            acousticParams.EarlyReflectionsPowerDb = -100.0f;
-            acousticParams.EarlyReflections60DbDecaySeconds = 0.0f;
-            acousticParams.LateReverb60DbDecaySeconds = 0.0f;
-            acousticParams.Outdoorness = 0.0f;
+            acousticParams.EarlyReflectionsPowerDb = c_DefaultEarlyReflectionsPowerDb;
+            acousticParams.EarlyReflections60DbDecaySeconds = c_DefaultEarlyReflections60DbDecaySeconds;
+            acousticParams.LateReverb60DbDecaySeconds = c_DefaultLateReverb60DbDecaySeconds;
+            acousticParams.Outdoorness = c_DefaultOutdoorness;
             acousticParams.HrtfMode = static_cast<HrtfDspMode>(HrtfDspMode_Quality1);
 
             data->EffectHrtfInfo->SetParameters(&acousticParams);
@@ -173,21 +167,32 @@ namespace Spatializer
     bool ShouldSpatialize(UnityAudioEffectState* state)
     {
         // state data and SpatializerData are required.
-        RETURN_FALSE_IF_TRUE(state == nullptr || state->spatializerdata == nullptr);
+        if (state == nullptr || state->spatializerdata == nullptr)
+        {
+            return false;
+        }
 
         // DSP buffer size must be a power of two aligned and smaller than HRTF quantum.
         // This ensures even multiples fit inside a single HRTF pass for buffering.
-        RETURN_FALSE_IF_TRUE(!IsPowerOfTwo(state->dspbuffersize) || state->dspbuffersize > c_HrtfFrameCount);
+        if (!IsPowerOfTwo(state->dspbuffersize) || state->dspbuffersize > c_HrtfFrameCount)
+        {
+            return false;
+        }
 
         // Stream must be marked IsPlaying, Not Paused, Not Muted, and spatial blend meaningfully > 0
-        RETURN_FALSE_IF_TRUE(
-            !(state->flags & UnityAudioEffectStateFlags_IsPlaying) ||
+        if (!(state->flags & UnityAudioEffectStateFlags_IsPlaying) ||
             (state->flags & UnityAudioEffectStateFlags_IsPaused) ||
-            (state->flags & UnityAudioEffectStateFlags_IsMuted) || (state->spatializerdata->spatialblend <= 0.001f));
+            (state->flags & UnityAudioEffectStateFlags_IsMuted) || (state->spatializerdata->spatialblend <= 0.001f))
+        {
+            return false;
+        }
 
         // Do not spatialize if the EffectData is missing, or if the source is too quiet
         auto data = state->GetEffectData<EffectData>();
-        RETURN_FALSE_IF_TRUE(data == nullptr || data->DryDistanceAttenuation <= c_MinAudibleGain);
+        if (data == nullptr || data->DryDistanceAttenuation <= c_MinAudibleGain)
+        {
+            return false;
+        }
 
         // For all other cases, we should spatialize this stream
         return true;
@@ -198,7 +203,10 @@ namespace Spatializer
         int outChannels)
     {
         // Don't need to support this because it doesn't seem this scenario exists in the Unity audio engine
-        RETURN_RESULT_IF_TRUE(inChannels != outChannels, UNITY_AUDIODSP_ERR_UNSUPPORTED);
+        if (inChannels != outChannels)
+        {
+            return UNITY_AUDIODSP_ERR_UNSUPPORTED;
+        }
 
         auto data = state->GetEffectData<EffectData>();
 
@@ -222,9 +230,6 @@ namespace Spatializer
             return UNITY_AUDIODSP_OK;
         }
 
-        auto S = state->spatializerdata->sourcematrix;
-        auto L = state->spatializerdata->listenermatrix;
-
         // If we previously released the source, get one back
         if (data->EffectHrtfInfo == nullptr)
         {
@@ -240,6 +245,8 @@ namespace Spatializer
         }
 
         // There's no acoustics support yet, update params using a through-the-wall method
+        auto S = state->spatializerdata->sourcematrix;
+        auto L = state->spatializerdata->listenermatrix;
         UpdateAcousticParams(data, ListenerToSourceDirection(S, L));
 
         // Sometimes, the previous allocation can fail and produce a SourceBuffer with a null array

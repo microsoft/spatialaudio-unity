@@ -9,7 +9,7 @@
 
 #include <cstring>
 
-namespace SpatialMixer
+namespace SpatializerMixer
 {
     struct EffectData
     {
