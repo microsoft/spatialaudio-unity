@@ -54,7 +54,6 @@ def main():
     args = parser.parse_args()
 
     # Copy plugin binaries to project location
-    stage.stage_binaries_isac(args.stage)
     stage.stage_binaries_crossplatform(args.stage)
 
     git_root = oshelpers.fixpath(githelpers.get_root())
@@ -68,7 +67,6 @@ def main():
         os.mkdir(npm_package_location)
 
     create_npm_package(constants.crossplatform_unity_project_dir, constants.crossplatform_spatializer_plugin_name, constants.crossplatform_spatializer_npm_package_name, npm_package_location, args.version, args.publish, args.dryrun)
-    create_npm_package(constants.isac_unity_project_dir, constants.isac_spatializer_plugin_name, constants.isac_spatializer_npm_package_name, npm_package_location, args.version, args.publish, args.dryrun)
 
 if __name__ == '__main__':
     main()

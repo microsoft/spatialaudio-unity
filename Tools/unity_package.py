@@ -41,7 +41,6 @@ def main():
     args = parser.parse_args()
 
     # Copy plugin binaries to project location
-    stage.stage_binaries_isac(args.stage)
     stage.stage_binaries_crossplatform(args.stage)
 
     git_root = oshelpers.fixpath(githelpers.get_root())
@@ -61,7 +60,6 @@ def main():
     if not os.path.isdir(unity_package_location):
         os.mkdir(unity_package_location)
 
-    create_unity_package(unity_exe_path, constants.isac_unity_project_dir, unity_package_location, constants.isac_spatializer_plugin_name, args.version)
     create_unity_package(unity_exe_path, constants.crossplatform_unity_project_dir, unity_package_location, constants.crossplatform_spatializer_plugin_name, args.version)
 
 if __name__ == '__main__':

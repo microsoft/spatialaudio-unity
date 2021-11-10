@@ -21,40 +21,6 @@ def copy_binary(binary_name, platform, source_dir, target_dir):
     else:
         copy_file(oshelpers.fixpath(source_dir, "lib" + binary_name + ".so"), target_dir)
 
-def stage_binaries_isac(artifacts_path = ""):
-    git_root = oshelpers.fixpath(githelpers.get_root())
-    plugin_path_under_project = oshelpers.fixpath(constants.isac_unity_project_dir, "Assets", constants.isac_spatializer_plugin_name, "Plugins")
-
-    if not artifacts_path:
-        source_dir_x64_desktop = oshelpers.fixpath(git_root, constants.build_root, "windows", "x64", "bin", "relwithdebinfo")
-        source_dir_x86_desktop = oshelpers.fixpath(git_root, constants.build_root, "windows", "Win32", "bin", "relwithdebinfo")
-        source_dir_x64_uwp = oshelpers.fixpath(git_root, constants.build_root, "windowsstore", "x64", "bin", "relwithdebinfo")
-        source_dir_x86_uwp = oshelpers.fixpath(git_root, constants.build_root, "windowsstore", "Win32", "bin", "relwithdebinfo")
-        source_dir_ARM_uwp = oshelpers.fixpath(git_root, constants.build_root, "windowsstore", "ARM", "bin", "relwithdebinfo")
-        source_dir_ARM64_uwp = oshelpers.fixpath(git_root, constants.build_root, "windowsstore", "ARM64", "bin", "relwithdebinfo")
-    else:
-        source_dir_x64_desktop = oshelpers.fixpath(artifacts_path, "windows_x64_relwithdebinfo")
-        source_dir_x86_desktop = oshelpers.fixpath(artifacts_path, "Windows_Win32_relwithdebinfo")
-        source_dir_x64_uwp = oshelpers.fixpath(artifacts_path, "windowsstore_x64_relwithdebinfo")
-        source_dir_x86_uwp = oshelpers.fixpath(artifacts_path, "Windowsstore_Win32_relwithdebinfo")
-        source_dir_ARM_uwp = oshelpers.fixpath(artifacts_path, "Windowsstore_arm_relwithdebinfo")
-        source_dir_ARM64_uwp = oshelpers.fixpath(artifacts_path, "Windowsstore_arm64_relwithdebinfo")
-
-    target_path_x64_desktop = oshelpers.fixpath(git_root, plugin_path_under_project, "x86_64")
-    target_path_x86_desktop = oshelpers.fixpath(git_root, plugin_path_under_project, "x86")
-    target_path_x64_uwp = oshelpers.fixpath(git_root, plugin_path_under_project, "WSA", "x86_64")
-    target_path_x86_uwp = oshelpers.fixpath(git_root, plugin_path_under_project, "WSA", "x86")
-    target_path_ARM_uwp = oshelpers.fixpath(git_root, plugin_path_under_project, "WSA", "arm")
-    target_path_ARM64_uwp = oshelpers.fixpath(git_root, plugin_path_under_project, "WSA", "arm64")
-
-    copy_binary(constants.isac_spatializer_name, "Windows", source_dir_x64_desktop, target_path_x64_desktop)
-    copy_binary(constants.isac_spatializer_name, "Windows", source_dir_x86_desktop, target_path_x86_desktop)
-    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_x64_uwp, target_path_x64_uwp)
-    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_x86_uwp, target_path_x86_uwp)
-    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_ARM_uwp, target_path_ARM_uwp)
-    copy_binary(constants.isac_spatializer_name, "WindowsStore", source_dir_ARM64_uwp, target_path_ARM64_uwp)
-
-
 def stage_binaries_crossplatform(artifacts_path = ""):
     git_root = oshelpers.fixpath(githelpers.get_root())
     plugin_path_under_project = oshelpers.fixpath(constants.crossplatform_unity_project_dir, "Assets", constants.crossplatform_spatializer_plugin_name, "Plugins")
