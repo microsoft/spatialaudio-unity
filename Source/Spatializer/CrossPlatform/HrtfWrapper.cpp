@@ -69,7 +69,7 @@ uint32_t HrtfWrapper::Process(float* outputBuffer, uint32_t numSamples, uint32_t
 }
 
 HrtfWrapper::HrtfWrapper()
-    : m_GlobalReverbPower(0), m_GlobalReverbTime(1), m_SampleBuffers(c_HrtfMaxSources, c_HrtfFrameCount)
+    : m_SampleBuffers(c_HrtfMaxSources, c_HrtfFrameCount)
 {
 
     for (uint32_t i = 0; i < c_HrtfMaxSources; ++i)
