@@ -49,7 +49,4 @@ private:
     HrtfInputBuffer m_HrtfInputBuffers[c_HrtfMaxSources];
     HrtfEngineHandle m_FlexEngine;
     std::stack<unsigned char> m_AvailableProcessingSlots;
-
-    float m_GlobalReverbPower;
-    float m_GlobalReverbTime;
 };
