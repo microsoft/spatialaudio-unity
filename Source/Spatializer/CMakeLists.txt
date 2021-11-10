@@ -3,4 +3,4 @@
 if (WIN32)
     add_subdirectory (HoloLens2)
 endif ()
-add_subdirectory (ProjectAcoustics )
+add_subdirectory (CrossPlatform)

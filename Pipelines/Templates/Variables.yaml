@@ -4,7 +4,7 @@
 variables:
     ProductMajorMinor: 1.0
     SigningBranch: master
-    UnityVersion: 'Unity2019.4.8f1'
+    UnityVersion: $(Unity2020LTSVer)
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
-    NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
+    NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity.HoloLens'

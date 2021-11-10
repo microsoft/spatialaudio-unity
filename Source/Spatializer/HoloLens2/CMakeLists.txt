@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-project(AudioPluginMicrosoftSpatializer)
+project(AudioPluginMicrosoftSpatializerIsac)
 
 # Enable whole program optimization for all DLLs/EXEs
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
