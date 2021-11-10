@@ -16,12 +16,6 @@ build_root = "build"
 externals_path = oshelpers.fixpath(githelpers.get_root(), "Source", "External")
 solution_file = "Microsoft.SpatialAudio.Unity.sln"
 
-# ISAC based spatializer that provides access to HW offload on HL2
-isac_spatializer_name = "AudioPluginMicrosoftSpatializerIsac"
-isac_spatializer_plugin_name = "Microsoft.SpatialAudio.Spatializer.Unity.HoloLens"
-isac_spatializer_npm_package_name= "com.microsoft.spatialaudio.spatializer.unity.HoloLens"
-isac_unity_project_dir = "Source/Plugins/IsacPluginGenerator"
-
 # CrossPlatform spatializer with Windows and Android support
 crossplatform_spatializer_name = "AudioPluginMicrosoftSpatializerCrossPlatform"
 crossplatform_spatializer_npm_package_name= "com.microsoft.spatialaudio.spatializer.unity"

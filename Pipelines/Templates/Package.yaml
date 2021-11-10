@@ -40,7 +40,7 @@ jobs:
     displayName: 'Publish Unity Package to Fileshare'
     inputs:
       PathtoPublish: '$(Pipeline.Workspace)\unity'
-      ArtifactName: IsacPluginUnity
+      ArtifactName: CrossPlatformPluginUnity
       publishLocation: FilePath
       TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
       Parallel: true
@@ -49,31 +49,31 @@ jobs:
   - task: CmdLine@2
     displayName: Copy .npmrc for Internal Feed
     inputs:
-      script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\.npmrc
+      script: copy $(Build.SourcesDirectory)\Tools\InternalFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\CrossPlatformPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - task: npmAuthenticate@0
     displayName: Internal NPM Feed Authentication
     inputs:
-      workingFile: Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\.npmrc
+      workingFile: Source\Plugins\CrossPlatformPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion) -p
     displayName: Publish NPM Package to Internal Feed
     condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))
   - task: CmdLine@2
     displayName: Copy .npmrc for Public Feed
     inputs:
-      script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\.npmrc
+      script: copy $(Build.SourcesDirectory)\Tools\PublicFeed.npmrc $(Build.SourcesDirectory)\Source\Plugins\CrossPlatformPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
   - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)
     displayName: Build Public NPM Package
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Fileshare'
     inputs:
       PathtoPublish: '$(Pipeline.Workspace)\npm'
-      ArtifactName: IsacPluginNpm
+      ArtifactName: CrossPlatformPluginNpm
       publishLocation: FilePath
       TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
       Parallel: true
   - task: PublishBuildArtifacts@1
     displayName: 'Publish NPM Package to Build Artifacts'
     inputs:
-      PathtoPublish: '$(Build.SourcesDirectory)\Source\Plugins\IsacPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity.HoloLens\'
+      PathtoPublish: '$(Build.SourcesDirectory)\Source\Plugins\CrossPlatformPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\'
       ArtifactName: 'NpmPackage'
 
