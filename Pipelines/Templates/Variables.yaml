@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 
 variables:
-    ProductMajorMinor: 1.0
+    ProductMajorMinor: 2.0
     SigningBranch: master
     UnityVersion: $(Unity2020LTSVer)
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
-    NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity.HoloLens'
+    NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
