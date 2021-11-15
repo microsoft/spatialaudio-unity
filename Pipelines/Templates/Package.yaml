@@ -12,6 +12,10 @@ jobs:
     demands: Unity2020LTS
   variables:
     unityLocation: ''
+    ${{ if eq(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
+      PackageVersion: $(ProductVersion)
+    ${{ if ne(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
+      PackageVersion: '$(ProductVersion)-prerelease'
   steps:
   - script: echo Downloading Pipeline Artifacts
   - checkout: self
@@ -27,14 +31,7 @@ jobs:
       script:
         $info = (Get-UnitySetupInstance | Select-UnitySetupInstance -Version $(Unity2020LTSVer)).Path + "\Editor";
         Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
-  - task: PowerShell@2
-    name: SetVersionTag
-    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
-    inputs:
-      targetType: 'inline'
-      script:
-        Write-Output "##vso[task.setvariable variable=ProductVersion;]$(ProductVersion)$(ProductVersion.Tag)"
-  - script: python tools\unity_package.py -u "$(unityLocation)" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(ProductVersion)$(ProductVersion.Tag)
+  - script: python tools\unity_package.py -u "$(unityLocation)" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(PackageVersion)
     displayName: Building Unity Package
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Unity Package to Fileshare'
@@ -54,6 +51,6 @@ jobs:
     displayName: Internal NPM Feed Authentication
     inputs:
       workingFile: Source\Plugins\CrossPlatformPluginGenerator\Assets\Microsoft.SpatialAudio.Spatializer.Unity\.npmrc
-  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(ProductVersion)$(ProductVersion.Tag) -p
+  - script: python tools\upm_package.py -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\npm" -v $(PackageVersion) -p
     displayName: Publish NPM Package to Internal Feed
     condition: and(succeeded(), or (eq(variables['Build.SourceBranch'], 'refs/heads/master'), eq(variables['Build.SourceBranch'], 'refs/heads/develop'), eq(variables['PublishInternal'], 'True')))

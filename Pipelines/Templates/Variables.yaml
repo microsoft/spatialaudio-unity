@@ -6,7 +6,5 @@ variables:
     SigningBranch: master
     UnityVersion: $(Unity2020LTSVer)
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
-    ${{ if ne(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
-      ProductVersion.Tag: '-prerelease.${Build.SourceBranchName}.$(Build.BuildNumber)'
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
     NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
