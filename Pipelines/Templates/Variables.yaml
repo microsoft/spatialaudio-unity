@@ -9,5 +9,5 @@ variables:
     ProductVersion.Tag: 
     ${{ if eq(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
       ProductVersion.Tag: '-prerelease.${Build.SourceBranchName}.$(Build.BuildNumber)'
-    ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)${ProductVersion.Tag}
+    ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
     NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
