@@ -15,7 +15,7 @@ jobs:
     ${{ if eq(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
       PackageVersion: $(ProductVersion)
     ${{ if ne(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
-      PackageVersion: '$(ProductVersion)-prerelease.$(Build.BuildNumber)'
+      PackageVersion: '$(ProductVersion)-prerelease.$(Build.SourceBranchName).$(Build.BuildNumber)'
   steps:
   - script: echo Downloading Pipeline Artifacts
   - checkout: self
