@@ -47,7 +47,7 @@
       "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
     },
     "com.microsoft.spatialaudio.spatializer.unity": {
-      "version": "2.0.0",
+      "version": "2.0.5-prerelease",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
