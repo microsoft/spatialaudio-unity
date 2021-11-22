@@ -3,7 +3,7 @@
   "displayName": "Microsoft Spatializer",
   "version": "%version%",
   "unity": "2019.4",
-  "description": "Cross-platform Audio Spatializer Mixed Reality and Immersive 3D applications",
+  "description": "Cross-platform Audio Spatializer for Mixed Reality and Immersive 3D applications",
   "msftFeatureCategory": "Spatial Audio",
   "keywords": [
     "microsoft",
