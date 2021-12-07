@@ -20,7 +20,7 @@ steps:
       downloadDirectory: ${{ parameters.destination }}
       feedsToUse: external
       externalFeedCredentials: $(AIPMRConnection)
-      feedDownloadExternal: 'SpatialAudio-packages-test'
+      feedDownloadExternal: 'SpatialAudio-packages'
       packageDownloadExternal: ${{ parameters.package }}
       versionDownloadExternal: ${{ parameters.version }}
 

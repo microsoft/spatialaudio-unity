@@ -24,7 +24,7 @@ crossplatform_unity_project_dir = "Source/Plugins/CrossPlatformPluginGenerator"
 
 # Where to get the Universal Package dependencies
 aipmr_azure_org = "https://dev.azure.com/aipmr/"
-aipmr_package_feed = "SpatialAudio-packages-test"
+aipmr_package_feed = "SpatialAudio-packages"
 hrtfdsp_package_name = "pa-hrtfdsp"
 hrtfdsp_package_version = "2.1.571-prerelease"
 
