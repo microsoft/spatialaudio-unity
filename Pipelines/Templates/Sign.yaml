@@ -18,7 +18,7 @@ jobs:
       ArtifactName: 'BuildArtifacts'
 
 - job: CodeSign_Binaries
-  condition: and(succeeded(), eq(variables['Build.SourceBranchName'], variables['SigningBranch']))
+  condition: and(succeeded(), or(eq(variables['SignBinaries'], 'true'), eq(variables['Build.SourceBranchName'], variables['SigningBranch'])))
   dependsOn: Consolidate_Artifacts
   continueOnError: false
   pool:
@@ -41,7 +41,7 @@ jobs:
       verbosity: 'Verbose'
       alertWarningLevel: 'High'
   - task: EsrpCodeSigning@1
-    displayName: 'CodeSign Binaries - ''SigningBranch'' only'
+    displayName: 'CodeSign Binaries'
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
     inputs:
