@@ -8,3 +8,7 @@ variables:
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
     NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
+    ${{ if eq(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
+      PackageVersion: $(ProductVersion)
+    ${{ else }}:
+      PackageVersion: '$(ProductVersion)-prerelease'
