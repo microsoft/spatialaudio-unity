@@ -7,7 +7,7 @@ parameters:
   default: 'pa-hrtfdsp'
 - name: version
   type: string
-  default: '2.1.571-prerelease'
+  default: '2.1.677-prerelease'
 - name: destination
   type: string
   default: $(Build.SourcesDirectory)\Source\External\hrtfdsp
