@@ -12,11 +12,6 @@ jobs:
     demands: Unity2020LTS
   variables:
     unityLocation: ''
-    ${{ if eq(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
-      PackageVersion: $(ProductVersion)
-    ${{ else }}:
-      PackageVersion: '$(ProductVersion)-prerelease.$(Build.SourceBranchName).$(Build.BuildNumber)'
-      
   steps:
   - script: echo Downloading Pipeline Artifacts
   - checkout: self
