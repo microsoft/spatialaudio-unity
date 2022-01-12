@@ -2,7 +2,7 @@
 
 ## 1. Add the spatializer package reference to manifest.json
 This is the recommended way to add the plugin package to a project. 
-- Open the `manifest.json` file from the project in an editor
+- Open the `manifest.json` file from the project in a text editor
 - Add Microsoft's scoped registry and the package reference  
     <pre>
     {
@@ -26,7 +26,7 @@ This is the recommended way to add the plugin package to a project.
 
 For an example, see the [sample project manifest.](../samples/MicrosoftSpatializerSample/Packages/manifest.json)
 
-Plugin package can also be downloaded from GitHub releases and imported into the project using `Assets > Import Package > Custom Package` menu.  
+The plugin package can also be downloaded from GitHub releases and imported into the project using `Assets > Import Package > Custom Package` menu.  
 
 ## 2. Configure the project to use Microsoft Spatializer
 - Open the project settings using `Edit > Project Settings`
@@ -37,8 +37,8 @@ Plugin package can also be downloaded from GitHub releases and imported into the
 ## 3. Add the Microsoft Spatializer Mixer to the project
 `Microsoft Spatializer Mixer` effect is necessary to process all the spatialized audio objects in a scene.
 - Add an audio mixer to the project
-  - Give the mixer a name, e.g. `Master` 
   - In the `Project` pane, right-click on the `Assets` folder, then `Create > Audio Mixer`
+  - Give the mixer a name, e.g. `Master` 
   - Open the mixer and right-click, then select `Add effect at bottom > Microsoft Spatializer Mixer`
 
     ![Microsoft Spatializer Mixer](./Images/SpatializerMixerSetup.png)
