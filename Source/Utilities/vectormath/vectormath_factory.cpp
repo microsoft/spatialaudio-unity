@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "vectormath.h"
+#include "VectorMath.h"
 #include "vectormath_generic.h"
 #include "vectormath_sse2.h"
 #include "vectormath_neon.h"

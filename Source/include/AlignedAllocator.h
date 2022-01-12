@@ -5,7 +5,7 @@
 #include <malloc.h>
 #endif
 #include <vector>
-#include "vectormath.h"
+#include "VectorMath.h"
 
 namespace AlignedStore
 {

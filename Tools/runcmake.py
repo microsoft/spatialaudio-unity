@@ -17,26 +17,48 @@ generator_vs2019 = "\"Visual Studio 16 2019\""
 windows_arm_cmake = ["-DCMAKE_GENERATOR_PLATFORM=ARM"]
 windows_arm64_cmake = ["-DCMAKE_GENERATOR_PLATFORM=ARM64"]
 
+# Android settings
+android_armeabi_v7a_release_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=RelWithDebInfo", "-DCMAKE_TOOLCHAIN_FILE=" + constants.android_toolchain, "-DCMAKE_MAKE_PROGRAM=" + constants.android_make, "-DANDROID_ABI=armeabi-v7a", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM_LEVEL=android-23", "-DANDROID_TOOLCHAIN=clang"]
+android_armeabi_v7a_debug_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=Debug", "-DCMAKE_TOOLCHAIN_FILE=" + constants.android_toolchain, "-DCMAKE_MAKE_PROGRAM=" + constants.android_make, "-DANDROID_ABI=armeabi-v7a", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM_LEVEL=android-23", "-DANDROID_TOOLCHAIN=clang"]
+android_arm64_v8a_release_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=RelWithDebInfo", "-DCMAKE_TOOLCHAIN_FILE=" + constants.android_toolchain, "-DCMAKE_MAKE_PROGRAM=" + constants.android_make, "-DANDROID_ABI=arm64-v8a", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM_LEVEL=android-23", "-DANDROID_TOOLCHAIN=clang"]
+android_arm64_v8a_debug_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=Debug", "-DCMAKE_TOOLCHAIN_FILE=" + constants.android_toolchain, "-DCMAKE_MAKE_PROGRAM=" + constants.android_make, "-DANDROID_ABI=arm64-v8a", "-DANDROID_ARM_NEON=TRUE", "-DANDROID_PLATFORM_LEVEL=android-23", "-DANDROID_TOOLCHAIN=clang"]
+android_x86_release_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=RelWithDebInfo", "-DCMAKE_TOOLCHAIN_FILE=" + constants.android_toolchain, "-DCMAKE_MAKE_PROGRAM=" + constants.android_make, "-DANDROID_ABI=x86", "-DANDROID_PLATFORM_LEVEL=android-23", "-DANDROID_TOOLCHAIN=clang"]
+android_x86_debug_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=Debug", "-DCMAKE_TOOLCHAIN_FILE=" + constants.android_toolchain, "-DCMAKE_MAKE_PROGRAM=" + constants.android_make, "-DANDROID_ABI=x86", "-DANDROID_PLATFORM_LEVEL=android-23", "-DANDROID_TOOLCHAIN=clang"]
+
+
 # os specific cmake command
 def call_cmake():
     return "cmake -G "
+
+def download_universal_package(org, feed, package, version, dest):
+    command = \
+        "az artifacts universal download --organization " + org + \
+        " --feed " + feed + \
+        " --name " + package + \
+        " --version " + version + \
+        " --path " + dest
+    subprocess.run(command, cwd = githelpers.get_root(), check = True, shell = True)
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--windows", help="Generate Windows desktop configurations", action='store_true')
     parser.add_argument("--windowsstore", help="Generate WindowsStore (UWP) configurations", action='store_true')
+    parser.add_argument("--android", help="Generate Android configurations", action='store_true')
     parser.add_argument("--notest", help="Skip generation of test configurations", action='store_true')
     parser.add_argument("-v", "--version", help="Semantic version string", type=str.lower)
+    parser.add_argument("--download", help="Download universal packages", action='store_true')
     args = parser.parse_args()
 
     cmake_windows = False
     cmake_windowsstore = False
+    cmake_android = False
     cmake_tests = True
 
     # No args provides, generate all configs
     if len(sys.argv) == 1:
         cmake_windows = True
         cmake_windowsstore = True
+        cmake_android = True
         cmake_tests = True
     # Generate Windows desktop configs
     if args.windows:
@@ -44,6 +66,9 @@ def main():
     # Generate UWP configs
     if args.windowsstore:
         cmake_windowsstore = True
+    # Generate Andrdid configs
+    if args.android:
+        cmake_android = True
     # Turn off test config generation
     if args.notest:
         cmake_tests = False
@@ -51,6 +76,16 @@ def main():
     git_root = oshelpers.fixpath(githelpers.get_root())
     build_dir = oshelpers.fixpath(git_root, constants.build_root)
     print("Creating build dirs under '%s'" %build_dir)
+
+    # Download universal package dependencies
+    if (args.download):
+        # HrtfDsp
+        download_universal_package(
+            constants.aipmr_azure_org,
+            constants.aipmr_package_feed,
+            constants.hrtfdsp_package_name,
+            constants.hrtfdsp_package_version,
+            oshelpers.fixpath(constants.externals_path, "hrtfdsp"))
 
     # Pass version (if specified) to CMake
     product_version_cmake = ''
@@ -63,20 +98,28 @@ def main():
     windows_arm64_cmake[:0] = [generator_vs2019, "-A ARM64", product_version_cmake]
 
     if (cmake_windows):
-        create_build_folder_for_platform_architecture(build_dir, "Windows", "x86", windows_win32_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Windows", "Win32", windows_win32_cmake, cmake_tests, git_root)
         create_build_folder_for_platform_architecture(build_dir, "Windows", "x64", windows_x64_cmake, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "Windows", "arm", windows_arm_cmake, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "Windows", "arm64", windows_arm64_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Windows", "ARM", windows_arm_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Windows", "ARM64", windows_arm64_cmake, cmake_tests, git_root)
     if (cmake_windowsstore):
         windows_store_flags = ["-DCMAKE_SYSTEM_NAME=WindowsStore -DCMAKE_SYSTEM_VERSION=10.0"]
         windowsstore_win32_cmake = windows_win32_cmake + windows_store_flags
         windowsstore_x64_cmake = windows_x64_cmake + windows_store_flags
         windowsstore_arm_cmake = windows_arm_cmake + windows_store_flags
         windowsstore_arm64_cmake = windows_arm64_cmake + windows_store_flags
-        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "x86", windowsstore_win32_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "Win32", windowsstore_win32_cmake, cmake_tests, git_root)
         create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "x64", windowsstore_x64_cmake, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "ARM", windowsstore_arm_cmake, cmake_tests, git_root)
-        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "ARM64", windowsstore_arm64_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "arm", windowsstore_arm_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "WindowsStore", "arm64", windowsstore_arm64_cmake, cmake_tests, git_root)
+    if (cmake_android):
+        create_build_folder_for_platform_architecture(build_dir, "Android", "x86-Debug"  , android_x86_debug_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Android", "x86", android_x86_release_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Android", "armeabi-v7a-Debug", android_armeabi_v7a_debug_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Android", "armeabi-v7a", android_armeabi_v7a_release_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Android", "arm64-v8a-Debug", android_arm64_v8a_debug_cmake, cmake_tests, git_root)
+        create_build_folder_for_platform_architecture(build_dir, "Android", "arm64-v8a", android_arm64_v8a_release_cmake, cmake_tests, git_root)
+
 
 def create_build_folder_for_platform_architecture(build_dir, system, arch, cmake_options, cmake_tests, git_root):
     folder = oshelpers.fixpath(build_dir, system, arch)

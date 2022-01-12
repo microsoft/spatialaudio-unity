@@ -1,0 +1,27 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: package
+  type: string
+  default: 'pa-hrtfdsp'
+- name: version
+  type: string
+  default: '2.1.727-prerelease'
+- name: destination
+  type: string
+  default: $(Build.SourcesDirectory)\Source\External\hrtfdsp
+
+steps:
+  - task: UniversalPackages@0
+    displayName: Download Universal Package
+    inputs:
+      command: download
+      downloadDirectory: ${{ parameters.destination }}
+      feedsToUse: external
+      externalFeedCredentials: $(AIPMRConnection)
+      feedDownloadExternal: 'SpatialAudio-packages'
+      packageDownloadExternal: ${{ parameters.package }}
+      versionDownloadExternal: ${{ parameters.version }}
+
+

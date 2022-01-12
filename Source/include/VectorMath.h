@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <memory>
 
+#include "UndefSAL.h"
 #include "vectormath_floatfc.h"
 #include "vectormath_interfaces.h"
 

@@ -1,0 +1,52 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: jobName
+  type: string
+  default: arm
+- name: architecture
+  type: string
+  default: armeabi-v7a
+- name: configuration
+  type: string
+  default: RelWithDebInfo
+  values:
+  - Debug
+  - RelWithDebInfo
+
+jobs:
+- job: Android_${{ parameters.jobName }}_${{ parameters.configuration }}
+  pool:
+    name: Analog-1ES-WindowsLatest
+    vmImage: 'windows-2019'
+  dependsOn: []
+  steps:
+  - checkout: self
+    submodules: true
+    fetchDepth: 1
+  - template: DownloadPackage.yaml
+  - task: PythonScript@0
+    displayName: 'Run CMake'
+    inputs:
+      scriptSource: 'filePath'
+      scriptPath: tools/runcmake.py
+      arguments: --android --version $(ProductVersion)
+      abortOnFail: true
+  - task: PythonScript@0
+    displayName: Build
+    inputs:
+      scriptSource: 'filePath'
+      scriptPath: tools/build.py
+      arguments: --platform android --arch ${{ parameters.architecture }} --config ${{ parameters.configuration }}
+      abortOnFail: true
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: 'build\android\${{ parameters.architecture }}\lib\${{ parameters.configuration }}'
+      Contents: '**'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)\$(Agent.JobName)'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: $(Agent.JobName)
+      publishLocation: 'Container'
