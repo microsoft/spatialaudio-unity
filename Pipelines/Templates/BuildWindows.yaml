@@ -30,7 +30,6 @@ jobs:
     submodules: true
   - script: 'echo git submodule update --init --recursive'
     displayName: 'Update Submodules'
-  - template: DownloadPackage.yaml
   - script: python tools\runcmake.py --${{ parameters.platform }} --version $(ProductVersion)
     displayName: 'Run CMake'
   - task: MSBuild@1
