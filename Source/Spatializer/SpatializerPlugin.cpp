@@ -119,7 +119,6 @@ namespace Spatializer
             acousticParams.EarlyReflections60DbDecaySeconds = c_DefaultEarlyReflections60DbDecaySeconds;
             acousticParams.LateReverb60DbDecaySeconds = c_DefaultLateReverb60DbDecaySeconds;
             acousticParams.Outdoorness = c_DefaultOutdoorness;
-            acousticParams.HrtfMode = static_cast<HrtfDspMode>(HrtfDspMode_Quality1);
 
             data->EffectHrtfInfo->SetParameters(&acousticParams);
         }

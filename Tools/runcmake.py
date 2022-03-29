@@ -30,14 +30,19 @@ android_x86_debug_cmake = ["\"MinGW Makefiles\"", "-DCMAKE_BUILD_TYPE=Debug", "-
 def call_cmake():
     return "cmake -G "
 
-def download_universal_package(org, feed, package, version, dest):
-    command = \
-        "az artifacts universal download --organization " + org + \
-        " --feed " + feed + \
-        " --name " + package + \
-        " --version " + version + \
-        " --path " + dest
-    subprocess.run(command, cwd = githelpers.get_root(), check = True, shell = True)
+def install_nuget_package():
+    tools_dir = oshelpers.fixpath(githelpers.get_root(), 'tools')
+    externals_root = oshelpers.fixpath(githelpers.get_root(), "Source", "External")
+    nuget_restore_command = [
+        "nuget",
+        "restore",
+        oshelpers.fixpath(tools_dir, "packages.config"),
+        "-PackagesDirectory",
+        externals_root,
+        "-ConfigFile",
+        oshelpers.fixpath(tools_dir, "nuget.config")
+    ]
+    subprocess.check_call(nuget_restore_command, cwd=githelpers.get_root())
 
 def main():
     parser = argparse.ArgumentParser()
@@ -46,7 +51,6 @@ def main():
     parser.add_argument("--android", help="Generate Android configurations", action='store_true')
     parser.add_argument("--notest", help="Skip generation of test configurations", action='store_true')
     parser.add_argument("-v", "--version", help="Semantic version string", type=str.lower)
-    parser.add_argument("--download", help="Download universal packages", action='store_true')
     args = parser.parse_args()
 
     cmake_windows = False
@@ -77,15 +81,8 @@ def main():
     build_dir = oshelpers.fixpath(git_root, constants.build_root)
     print("Creating build dirs under '%s'" %build_dir)
 
-    # Download universal package dependencies
-    if (args.download):
-        # HrtfDsp
-        download_universal_package(
-            constants.aipmr_azure_org,
-            constants.aipmr_package_feed,
-            constants.hrtfdsp_package_name,
-            constants.hrtfdsp_package_version,
-            oshelpers.fixpath(constants.externals_path, "hrtfdsp"))
+    # Install NuGet dependencies
+    install_nuget_package()
 
     # Pass version (if specified) to CMake
     product_version_cmake = ''
