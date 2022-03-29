@@ -27,7 +27,7 @@ endif ()
 set (EXTERNAL_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/External)
 
 # HrtfDsp Version and Path
-set (HRTFDSP_VERSION "Microsoft.ProjectAcoustics.HrtfDsp.3.0.125-prerelease")
+set (HRTFDSP_VERSION "Microsoft.ProjectAcoustics.HrtfDsp.3.0.130-prerelease")
 
 include_directories (
     ${CMAKE_CURRENT_SOURCE_DIR}/include
