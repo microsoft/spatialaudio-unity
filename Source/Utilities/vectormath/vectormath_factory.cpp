@@ -1,13 +1,45 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#include "VectorMath.h"
+#include "vectormath.h"
 #include "vectormath_generic.h"
 #include "vectormath_sse2.h"
 #include "vectormath_neon.h"
 
+#ifdef VECTORMATH_FFTW
+class FftwCleanupHandler final
+{
+public:
+    ~FftwCleanupHandler()
+    {
+        fftwf_cleanup();
+    }
+};
+// FFTW cleanup needs to happen when all FFTW plans have been guaranteed to be destroyed.
+static FftwCleanupHandler g_FftwCleanupHandler;
+#endif
+
 namespace VectorMath
 {
+
+    std::unique_ptr<IRealFft> CreateRealFft(unsigned int order)
+    {
+#if defined(VECTORMATH_FFTW)
+        return std::unique_ptr<IRealFft>(new FftwWrapper(order));
+#else
+        return std::unique_ptr<IRealFft>(new RealFft_generic(order));
+#endif
+    }
+
+    std::shared_ptr<IRealFft> CreateSharedRealFft(unsigned int order)
+    {
+#if defined(VECTORMATH_FFTW)
+        return std::shared_ptr<IRealFft>(new FftwWrapper(order));
+#else
+        return std::shared_ptr<IRealFft>(new RealFft_generic(order));
+#endif
+    }
+
     namespace Arithmetic
     {
         // Platform abstraction for stateless math functions
@@ -20,6 +52,17 @@ namespace VectorMath
             Arithmetic_Neon::Add_32f(pDst, pSrc1, pSrc2, length);
 #else
             Arithmetic_Generic::Add_32f(pDst, pSrc1, pSrc2, length);
+#endif
+        }
+
+        void Add_32f(float* pDst, float const* pSrc1, float const* pSrc2, float const* pSrc3, size_t const length)
+        {
+#if defined(ARCH_X86) || defined(ARCH_X64)
+            Arithmetic_Sse2::Add_32f(pDst, pSrc1, pSrc2, pSrc3, length);
+#elif defined(ARCH_ARM) || defined(ARCH_ARM64)
+            Arithmetic_Neon::Add_32f(pDst, pSrc1, pSrc2, pSrc3, length);
+#else
+            Arithmetic_Generic::Add_32f(pDst, pSrc1, pSrc2, pSrc3, length);
 #endif
         }
 
@@ -60,6 +103,28 @@ namespace VectorMath
 #else
             Arithmetic_Generic::Add_32f_I(
                 reinterpret_cast<float*>(pSrcDst), reinterpret_cast<const float*>(pSrc), length * 2);
+#endif
+        }
+
+        void Sub_32f(float* pDst, float const* pSrc1, float const* pSrc2, size_t const length)
+        {
+#if defined(ARCH_X86) || defined(ARCH_X64)
+            Arithmetic_Sse2::Sub_32f(pDst, pSrc1, pSrc2, length);
+#elif defined(ARCH_ARM) || defined(ARCH_ARM64)
+            Arithmetic_Neon::Sub_32f(pDst, pSrc1, pSrc2, length);
+#else
+            Arithmetic_Generic::Sub_32f(pDst, pSrc1, pSrc2, length);
+#endif
+        }
+
+        void Sub_32fc(floatFC* pDst, floatFC const* pSrc1, floatFC const* pSrc2, size_t const length)
+        {
+#if defined(ARCH_X86) || defined(ARCH_X64)
+            Arithmetic_Sse2::Sub_32fc(pDst, pSrc1, pSrc2, length);
+#elif defined(ARCH_ARM) || defined(ARCH_ARM64)
+            Arithmetic_Neon::Sub_32fc(pDst, pSrc1, pSrc2, length);
+#else
+            Arithmetic_Generic::Sub_32fc(pDst, pSrc1, pSrc2, length);
 #endif
         }
 
@@ -181,6 +246,32 @@ namespace VectorMath
             Arithmetic_Neon::DotProd_32f(pDst, pSrc1, pSrc2, length);
 #else
             Arithmetic_Generic::DotProd_32f(pDst, pSrc1, pSrc2, length);
+#endif
+        }
+
+        /* Multiply source vectors by corresponding constant, sum the results, and save to output vector */
+        _Use_decl_annotations_ void DotProdC_32f(
+            float* pDst, float const* pSrc1, float const* pSrc2, float const* pSrc3, float const val1, float const val2,
+            float const val3, size_t length)
+        {
+#if defined(ARCH_X86) || defined(ARCH_X64)
+            Arithmetic_Sse2::DotProdC_32f(pDst, pSrc1, pSrc2, pSrc3, val1, val2, val3, length);
+#elif defined(ARCH_ARM) || defined(ARCH_ARM64)
+            Arithmetic_Neon::DotProdC_32f(pDst, pSrc1, pSrc2, pSrc3, val1, val2, val3, length);
+#else
+            Arithmetic_Generic::DotProdC_32f(pDst, pSrc1, pSrc2, pSrc3, val1, val2, val3, length);
+#endif
+        }
+
+        /* Find index of max element in vector */
+        _Use_decl_annotations_ uint32_t FindMaxIndex_32f(float* pVec, size_t const length)
+        {
+#if defined(ARCH_X86) || defined(ARCH_X64)
+            return Arithmetic_Sse2::FindMaxIndex_32f(pVec, length);
+#elif defined(ARCH_ARM) || defined(ARCH_ARM64)
+            return Arithmetic_Neon::FindMaxIndex_32f(pVec, length);
+#else
+            return Arithmetic_Generic::FindMaxIndex_32f(pVec, length);
 #endif
         }
 

@@ -4,15 +4,17 @@
 #if defined(ANDROID)
 #include <malloc.h>
 #endif
+#include <stdlib.h>
+#include <cstdlib>
 #include <vector>
-#include "VectorMath.h"
+#include "vectormath.h"
 
 namespace AlignedStore
 {
     // free standing aligned alloc and free functions
     inline void* aligned_malloc(size_t size, size_t alignment)
     {
-#if (WINDOWS || DURANGO)
+#if (WINDOWS || XBOX)
         return _aligned_malloc(size, alignment);
 #elif (LINUX || APPLE)
         void* ptr = nullptr;
@@ -23,6 +25,8 @@ namespace AlignedStore
         return ptr;
 #elif (ANDROID)
         return memalign(alignment, size);
+#elif defined(__XTENSA__)
+        return aligned_alloc(alignment, size);
 #else
         static_assert(false, "Not a valid platform?");
         return nullptr;
@@ -31,9 +35,9 @@ namespace AlignedStore
 
     inline void aligned_free(void* ptr)
     {
-#if (WINDOWS || DURANGO)
+#if (WINDOWS || XBOX)
         _aligned_free(ptr);
-#elif (LINUX || ANDROID || APPLE)
+#elif (LINUX || ANDROID || APPLE) || defined(__XTENSA__)
         free(ptr);
 #endif
     }

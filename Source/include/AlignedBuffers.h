@@ -121,7 +121,7 @@ namespace AlignedStore
     public:
         AlignedBuffers() = default;
 
-        AlignedBuffers(AlignedBuffers&& other)
+        AlignedBuffers(AlignedBuffers&& other) noexcept
             : AlignedBuffersConst<T, alignment>(other), m_Data(std::move(other.m_Data))
         {
         }
@@ -167,7 +167,8 @@ namespace AlignedStore
     private:
         T* GetPtrAt(uint32_t element)
         {
-            return reinterpret_cast<T*>(m_Data.get() + element * AlignedBuffersConst<T, alignment>::m_BytesPerBuffer);
+            return reinterpret_cast<T*>(
+                m_Data.get() + static_cast<uint32_t>(element * AlignedBuffersConst<T, alignment>::m_BytesPerBuffer));
         }
 
     private:
