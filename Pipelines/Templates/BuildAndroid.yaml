@@ -25,7 +25,6 @@ jobs:
   - checkout: self
     submodules: true
     fetchDepth: 1
-  - template: DownloadPackage.yaml
   - task: PythonScript@0
     displayName: 'Run CMake'
     inputs:

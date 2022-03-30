@@ -21,9 +21,9 @@ set (AUDIOPLUGIN_SRC
     PluginList.h)
 
 if (MSVC)
-    set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.lib)
+    set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/${HRTFDSP_VERSION}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.lib)
 elseif (ANDROID)
-    set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/libHrtfDsp.so)
+    set (HRTFDSP_LIB ${EXTERNAL_LIB_PATH}/${HRTFDSP_VERSION}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/libHrtfDsp.so)
 endif()
 
 add_library (${PROJECT_NAME} SHARED ${AUDIOPLUGIN_SRC})
@@ -43,15 +43,15 @@ target_link_libraries (${PROJECT_NAME}
 if (WIN32)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        "${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.dll"
+        "${EXTERNAL_LIB_PATH}/${HRTFDSP_VERSION}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.dll"
         $<TARGET_FILE_DIR:AudioPluginMicrosoftSpatializerCrossPlatform>)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        "${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.pdb"
+        "${EXTERNAL_LIB_PATH}/${HRTFDSP_VERSION}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/HrtfDsp.pdb"
         $<TARGET_FILE_DIR:AudioPluginMicrosoftSpatializerCrossPlatform>)
 elseif (ANDROID)
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        "${EXTERNAL_LIB_PATH}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/libHrtfDsp.so"
+        "${EXTERNAL_LIB_PATH}/${HRTFDSP_VERSION}/HrtfDsp/${CMAKE_SYSTEM_NAME}/${ARCHITECTURE}/libHrtfDsp.so"
         $<TARGET_FILE_DIR:AudioPluginMicrosoftSpatializerCrossPlatform>)
 endif ()
