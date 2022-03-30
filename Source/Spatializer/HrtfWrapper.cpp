@@ -115,6 +115,8 @@ void HrtfWrapper::ReleaseSource(uint32_t sourceIndex)
 
 uint32_t HrtfWrapper::ProcessHrtfs(float* outputBuffer, uint32_t numSamples, uint32_t numChannels) noexcept
 {
+    // Explicitly clear the output buffer
+    memset(outputBuffer, 0, sizeof(float) * numSamples * numChannels);
     auto retVal = HrtfEngineProcess(
         m_FlexEngine.Get(), m_HrtfInputBuffers, c_HrtfMaxSources, outputBuffer, numSamples * numChannels);
 
