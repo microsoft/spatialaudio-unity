@@ -22,12 +22,6 @@ crossplatform_spatializer_npm_package_name= "com.microsoft.spatialaudio.spatiali
 crossplatform_spatializer_plugin_name = "Microsoft.SpatialAudio.Spatializer.Unity"
 crossplatform_unity_project_dir = "Source/Plugins/CrossPlatformPluginGenerator"
 
-# Where to get the Universal Package dependencies
-aipmr_azure_org = "https://dev.azure.com/aipmr/"
-aipmr_package_feed = "SpatialAudio-packages"
-hrtfdsp_package_name = "pa-hrtfdsp"
-hrtfdsp_package_version = "2.1.727-prerelease"
-
 # Supported build platforms and configs
 build_platform_arch_map = {
     "Windows": ["Win32", "x64"],
