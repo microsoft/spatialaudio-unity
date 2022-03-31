@@ -25,8 +25,6 @@ namespace AlignedStore
         return ptr;
 #elif (ANDROID)
         return memalign(alignment, size);
-#elif defined(__XTENSA__)
-        return aligned_alloc(alignment, size);
 #else
         static_assert(false, "Not a valid platform?");
         return nullptr;
@@ -37,7 +35,7 @@ namespace AlignedStore
     {
 #if (WINDOWS || XBOX)
         _aligned_free(ptr);
-#elif (LINUX || ANDROID || APPLE) || defined(__XTENSA__)
+#elif (LINUX || ANDROID || APPLE)
         free(ptr);
 #endif
     }
