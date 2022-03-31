@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 #pragma once
-
 #include <stdint.h>
 #include <vector>
 #include <cstddef>
@@ -18,4 +17,11 @@ namespace VectorMath
     {
         return 16;
     }
+
+    // Factory function returns platform-specific implementation
+    std::unique_ptr<IRealFft> CreateRealFft(unsigned int order);
+
+    // Factory function returns platform-specific implementation
+    std::shared_ptr<IRealFft> CreateSharedRealFft(unsigned int order);
+
 } // namespace VectorMath

@@ -4,7 +4,7 @@
 
 #include "AudioPluginUtil.h"
 #include "HrtfWrapper.h"
-#include "VectorMath.h"
+#include "vectormath.h"
 #include "mathutility.h"
 
 #include <cstring>

@@ -75,7 +75,7 @@ PluginImporter:
         DontProcess: false
         PlaceholderPath: 
         SDK: AnySDK
-        ScriptingBackend: Il2Cpp
+        ScriptingBackend: AnyScriptingBackend
   userData: 
   assetBundleName: 
   assetBundleVariant: 

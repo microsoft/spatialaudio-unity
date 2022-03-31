@@ -82,7 +82,7 @@ HrtfWrapper::HrtfWrapper()
         m_AvailableProcessingSlots.push(static_cast<unsigned char>(c_HrtfMaxSources - i - 1));
     }
 
-    if (!HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_FlexBinaural_High, c_HrtfFrameCount, &m_FlexEngine))
+    if (!HrtfEngineInitialize(c_HrtfMaxSources, HrtfEngineType_FlexBinaural_High_NoReverb, c_HrtfFrameCount, &m_FlexEngine))
     {
         throw std::bad_alloc();
     } 
