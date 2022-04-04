@@ -51,3 +51,27 @@ If you forget to include submodules when cloning, add them with `git submodule u
 - Build produces UPM and Unity asset packages
 - Unity asset package is available under [releases tab](https://github.com/microsoft/spatialaudio-unity/releases)
 - Unity asset packages are also available on a UPM feed via [Microsoft Mixed Reality Feature Tool](https://docs.microsoft.com/en-us/windows/mixed-reality/mrtk-unity/configuration/usingupm?view=mrtkunity-2021-05)
+
+
+### Consuming the UPM Pacakge
+- [`manifest.json`](Samples/MicrosoftSpatializerSample/Packages/manifest.json) in the sample project shows integration of UPM package into a project
+  - Add/edit the `scopedRegistries` section to project's `manifest.json`
+    ```
+    "scopedRegistries": [
+      {
+        "name": "Microsoft Mixed Reality",
+        "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry/",
+        "scopes": [
+          "com.microsoft.spatialaudio"
+        ]
+      }
+    ],
+    ```
+  - And add the package name and version to the `dependencies` section
+    ```
+      "dependencies": {
+      ...
+      "com.microsoft.spatialaudio.spatializer.unity": "2.0.30-prerelease",
+      ...
+    }
+    ```
