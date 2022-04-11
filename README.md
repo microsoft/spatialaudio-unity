@@ -9,7 +9,7 @@ This repository provides plugins and tools for integrating spatial audio into yo
 Cloning this repository is not required to start using the Microsoft Spatializer in your Unity project. Visit the [documentation](https://docs.microsoft.com/en-us/windows/mixed-reality/spatial-sound-in-unity) for instructions on integrating the Microsoft Spatializer into your Unity project. For a more in-depth exploration of spatial audio, check out the [learning module](https://docs.microsoft.com/en-us/windows/mixed-reality/unity-spatial-audio-ch1). If you'd like to build the plugin yourself, see below.
 
 ### Choosing the right spatializer 
-As requirements and features have evolved over time, there are now 3 different Unity spatializer plugins available from Microsoft. Here's a brief description of their differences which can help decide the right plugin for a project.
+With requirements and features evolving over time, there are now 3 different Unity spatializer plugins available from Microsoft. Here's a brief description of their differences which can help decide the right plugin for a project.
 
 #### [Microsoft Spatializer v2](https://github.com/microsoft/spatialaudio-unity/releases/tag/v2.0.30-prerelease)
 This is the latest highly optimized cross-platform spatializer plugin for Windows and Android built from this repository. Although this plugin is currenly in the pre-release phase, it's being actively developed and recommended for any new projects, especially those that need to support both Windows and Android. This plugin uses the latest DSP engine that is highly optimized for both memory and CPU and fits well into Unity audio engine making it easier when supporting audio design features such as environmental reverb for the project's spatial audio mix.     
