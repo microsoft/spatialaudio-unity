@@ -8,8 +8,17 @@ This repository provides plugins and tools for integrating spatial audio into yo
 # Getting started with Spatial Audio for Unity
 Cloning this repository is not required to start using the Microsoft Spatializer in your Unity project. Visit the [documentation](https://docs.microsoft.com/en-us/windows/mixed-reality/spatial-sound-in-unity) for instructions on integrating the Microsoft Spatializer into your Unity project. For a more in-depth exploration of spatial audio, check out the [learning module](https://docs.microsoft.com/en-us/windows/mixed-reality/unity-spatial-audio-ch1). If you'd like to build the plugin yourself, see below.
 
-#### Legacy HoloLens 2 Spatializer plugin
-While it is recommended to switch over to the latest cross-platform spatializer plugin, the previous [HoloLens 2 specific spatializer plugin version](https://github.com/microsoft/spatialaudio-unity/tree/v1.0.246) with hardware offload suppport, remains available on [GitHub releases](https://github.com/microsoft/spatialaudio-unity/releases/tag/v1.0.246) and on a UPM feed via (Mixed Reality Feature Tool)[https://docs.microsoft.com/en-us/windows/mixed-reality/mrtk-unity/configuration/usingupm?view=mrtkunity-2021-05]. 
+### Choosing the right spatializer 
+With requirements and features evolving over time, there are now 3 different Unity spatializer plugins available from Microsoft. Here's a brief description of their differences which can help decide the right plugin for a project.
+
+#### [Microsoft Spatializer v2](https://github.com/microsoft/spatialaudio-unity/releases/tag/v2.0.30-prerelease)
+This is the latest highly optimized cross-platform spatializer plugin for Windows and Android built from this repository. Although this plugin is currenly in the pre-release phase, it's being actively developed and recommended for any new projects, especially those that need to support both Windows and Android. This plugin uses the latest DSP engine that is highly optimized for both memory and CPU and fits well into Unity's audio engine architecture.
+
+#### [Microsoft Spatializer v1](https://github.com/microsoft/spatialaudio-unity/releases/tag/v1.0.246)
+While it is recommended to switch over to the latest cross-platform spatializer plugin, the previous [HoloLens 2 specific spatializer plugin version](https://github.com/microsoft/spatialaudio-unity/tree/v1.0.246) with hardware offload suppport, remains available on [GitHub releases](https://github.com/microsoft/spatialaudio-unity/releases/tag/v1.0.246) and on a UPM feed via [Mixed Reality Feature Tool](https://docs.microsoft.com/en-us/windows/mixed-reality/mrtk-unity/configuration/usingupm?view=mrtkunity-2021-05). This plugin can be useful for any *HoloLens 2 specific projects* where it can reduce the CPU usage by leveraging offloaded spatial audio DSP. This plugin utilizes Windows Spatial Audio Platform APIs that prevent the processed audio signal to flow back into Unity's audio engine which can make it cumbersome for supporting some audio design features, such as adding an environmental reverb to the spatial audio mix.    
+
+#### Unity MS-HRTF Plugin
+This is the original spatializer plugin which is shared for historical purposes. This plugin does not utilize the multi-source mixer plugin which leads to higher compute overhead than newer plugin offerings.
 
 ## Required Software
 
