@@ -7,7 +7,7 @@ jobs:
   continueOnError: false
   displayName: Publish Packages to Feeds
   pool:
-    name: Analog On-Prem
+    name: Analog-Unity
   environment: 'SpatialAudio-Unity Release Approval'
   strategy:
     runOnce:
