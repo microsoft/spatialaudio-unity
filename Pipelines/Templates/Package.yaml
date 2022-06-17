@@ -8,7 +8,7 @@ jobs:
   continueOnError: false
   displayName: Generate Unity and NPM Packages
   pool:
-    name: Analog On-Prem
+    name: Analog-Unity
     demands: Unity2020LTS
   variables:
     unityLocation: ''
