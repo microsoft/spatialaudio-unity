@@ -17,15 +17,23 @@ if (WIN32)
         add_definitions(-DWINDOWSDESKTOP)
         set (WINDOWSDESKTOP TRUE)
     endif()
+elseif (${CMAKE_SYSTEM_NAME} STREQUAL Android)
+    set(ARCHITECTURE ${CMAKE_ANDROID_ARCH_ABI})
+    add_definitions(-DANDROID)
+    set (ANDROID TRUE)
 endif ()
 
 # Configuration
 set (EXTERNAL_LIB_PATH ${CMAKE_CURRENT_SOURCE_DIR}/External)
 
+# HrtfDsp Version and Path
+set (HRTFDSP_VERSION "Microsoft.ProjectAcoustics.HrtfDsp.3.0.418")
+
 include_directories (
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${EXTERNAL_LIB_PATH}
-    ${EXTERNAL_LIB_PATH}/wil/include)
+    ${EXTERNAL_LIB_PATH}/wil/include
+    ${EXTERNAL_LIB_PATH}/${HRTFDSP_VERSION}/HrtfDsp/include)
 
 # Compiler and linker options
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)

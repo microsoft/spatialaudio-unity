@@ -1,6 +1,5 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
-
 #include "cputype.h"
 #if defined(ARCH_X86) || defined(ARCH_X64)
 #include "vectormath.h"
@@ -9,6 +8,9 @@
 #include <cmath>
 // SSE2 header
 #include <xmmintrin.h>
+// SSE4 header
+#include <smmintrin.h>
+#include <algorithm>
 
 namespace VectorMath
 {
@@ -120,7 +122,98 @@ namespace VectorMath
                 pSrc1 += 1;
                 pSrc2 += 1;
                 pDst += 1;
-                i += 1;
+            }
+        }
+
+        void Add_32f(float* pDst, const float* pSrc1, const float* pSrc2, const float* pSrc3, size_t const length)
+        {
+            size_t i;
+
+            // aligned branch. check if pointers can be aligned.
+            if ((0 == (((ptrdiff_t) pDst) & 0x03)) && ((((ptrdiff_t) pDst) & 0x0f) == (((ptrdiff_t) pSrc1 & 0x0f))) &&
+                ((((ptrdiff_t) pDst) & 0x0f) == (((ptrdiff_t) pSrc2 & 0x0f))) &&
+                ((((ptrdiff_t) pDst) & 0x0f) == (((ptrdiff_t) pSrc3 & 0x0f))))
+            {
+                // align the destination
+                i = 0;
+                while ((i < length) && ((ptrdiff_t) pDst & 0x0f))
+                {
+                    *pDst = *pSrc1 + *pSrc2 + *pSrc3;
+                    pSrc1 += 1;
+                    pSrc2 += 1;
+                    pSrc3 += 1;
+                    pDst += 1;
+                    i += 1;
+                }
+
+                // everything is aligned
+                for (; i + 16 <= length; i += 16)
+                {
+                    __m128 xmm0, xmm1, xmm2, xmm3;
+
+                    xmm0 = _mm_load_ps(pSrc1);
+                    xmm1 = _mm_load_ps(pSrc1 + 4);
+                    xmm2 = _mm_load_ps(pSrc1 + 8);
+                    xmm3 = _mm_load_ps(pSrc1 + 12);
+                    pSrc1 += 16;
+                    xmm0 = _mm_add_ps(xmm0, *((__m128*) (pSrc2)));
+                    xmm1 = _mm_add_ps(xmm1, *((__m128*) (pSrc2 + 4)));
+                    xmm2 = _mm_add_ps(xmm2, *((__m128*) (pSrc2 + 8)));
+                    xmm3 = _mm_add_ps(xmm3, *((__m128*) (pSrc2 + 12)));
+                    pSrc2 += 16;
+                    xmm0 = _mm_add_ps(xmm0, *((__m128*) (pSrc3)));
+                    xmm1 = _mm_add_ps(xmm1, *((__m128*) (pSrc3 + 4)));
+                    xmm2 = _mm_add_ps(xmm2, *((__m128*) (pSrc3 + 8)));
+                    xmm3 = _mm_add_ps(xmm3, *((__m128*) (pSrc3 + 12)));
+                    pSrc3 += 16;
+                    _mm_store_ps(pDst, xmm0);
+                    _mm_store_ps(pDst + 4, xmm1);
+                    _mm_store_ps(pDst + 8, xmm2);
+                    _mm_store_ps(pDst + 12, xmm3);
+                    pDst += 16;
+                }
+
+                for (; i + 4 <= length; i += 4)
+                {
+                    __m128 xmm0;
+
+                    xmm0 = _mm_load_ps(pSrc1);
+                    pSrc1 += 4;
+                    xmm0 = _mm_add_ps(xmm0, *((__m128*) (pSrc2)));
+                    pSrc2 += 4;
+                    xmm0 = _mm_add_ps(xmm0, *((__m128*) (pSrc3)));
+                    pSrc3 += 4;
+                    _mm_store_ps(pDst, xmm0);
+                    pDst += 4;
+                }
+            }
+            // unaligned branch
+            else
+            {
+                for (i = 0; i + 4 <= length; i += 4)
+                {
+                    __m128 xmm0, xmm1;
+
+                    xmm1 = _mm_loadu_ps(pSrc1);
+                    pSrc1 += 4;
+                    xmm0 = _mm_loadu_ps(pSrc2);
+                    pSrc2 += 4;
+                    xmm0 = _mm_loadu_ps(pSrc3);
+                    pSrc3 += 4;
+                    xmm0 = _mm_add_ps(xmm0, xmm1);
+                    _mm_storeu_ps(pDst, xmm0);
+                    pDst += 4;
+                }
+            }
+
+            // remain floats
+            for (; i < length; i += 1)
+            {
+                *pDst = *pSrc1 + *pSrc2 + *pSrc3;
+                pSrc1 += 1;
+                pSrc2 += 1;
+                pSrc3 += 1;
+                pDst += 1;
             }
         }
 
@@ -132,6 +225,91 @@ namespace VectorMath
         void Add_32fc(floatFC* pDst, const floatFC* pSrc1, const floatFC* pSrc2, const size_t length)
         {
             Add_32f((float*) pDst, (float const*) pSrc1, (float const*) pSrc2, length * 2);
+        }
+
+        void Sub_32f(float* pDst, const float* pSrc1, const float* pSrc2, size_t const length)
+        {
+            size_t i;
+
+            // aligned branch. check if pointers can be aligned.
+            if ((0 == (((ptrdiff_t) pDst) & 0x03)) && ((((ptrdiff_t) pDst) & 0x0f) == (((ptrdiff_t) pSrc1 & 0x0f))) &&
+                ((((ptrdiff_t) pDst) & 0x0f) == (((ptrdiff_t) pSrc2 & 0x0f))))
+            {
+                // align the destination
+                i = 0;
+                while ((i < length) && ((ptrdiff_t) pDst & 0x0f))
+                {
+                    *pDst = *pSrc1 - *pSrc2;
+                    pSrc1 += 1;
+                    pSrc2 += 1;
+                    pDst += 1;
+                    i += 1;
+                }
+
+                // everything is aligned
+                for (; i + 16 <= length; i += 16)
+                {
+                    __m128 xmm0, xmm1, xmm2, xmm3;
+
+                    xmm0 = _mm_load_ps(pSrc1);
+                    xmm1 = _mm_load_ps(pSrc1 + 4);
+                    xmm2 = _mm_load_ps(pSrc1 + 8);
+                    xmm3 = _mm_load_ps(pSrc1 + 12);
+                    pSrc1 += 16;
+                    xmm0 = _mm_sub_ps(xmm0, *((__m128*) (pSrc2)));
+                    xmm1 = _mm_sub_ps(xmm1, *((__m128*) (pSrc2 + 4)));
+                    xmm2 = _mm_sub_ps(xmm2, *((__m128*) (pSrc2 + 8)));
+                    xmm3 = _mm_sub_ps(xmm3, *((__m128*) (pSrc2 + 12)));
+                    pSrc2 += 16;
+                    _mm_store_ps(pDst, xmm0);
+                    _mm_store_ps(pDst + 4, xmm1);
+                    _mm_store_ps(pDst + 8, xmm2);
+                    _mm_store_ps(pDst + 12, xmm3);
+                    pDst += 16;
+                }
+
+                for (; i + 4 <= length; i += 4)
+                {
+                    __m128 xmm0;
+
+                    xmm0 = _mm_load_ps(pSrc1);
+                    pSrc1 += 4;
+                    xmm0 = _mm_sub_ps(xmm0, *((__m128*) (pSrc2)));
+                    pSrc2 += 4;
+                    _mm_store_ps(pDst, xmm0);
+                    pDst += 4;
+                }
+            }
+            // unaligned branch
+            else
+            {
+                for (i = 0; i + 4 <= length; i += 4)
+                {
+                    __m128 xmm0, xmm1;
+
+                    xmm1 = _mm_loadu_ps(pSrc1);
+                    pSrc1 += 4;
+                    xmm0 = _mm_loadu_ps(pSrc2);
+                    pSrc2 += 4;
+                    xmm0 = _mm_sub_ps(xmm0, xmm1);
+                    _mm_storeu_ps(pDst, xmm0);
+                    pDst += 4;
+                }
+            }
+
+            // remain floats
+            for (; i < length; i += 1)
+            {
+                *pDst = *pSrc1 - *pSrc2;
+                pSrc1 += 1;
+                pSrc2 += 1;
+                pDst += 1;
+            }
+        }
+
+        void Sub_32fc(floatFC* pDst, const floatFC* pSrc1, const floatFC* pSrc2, const size_t length)
+        {
+            Sub_32f((float*) pDst, (float const*) pSrc1, (float const*) pSrc2, length * 2);
         }
 
         /* The implementations of the below functions were taken from
@@ -896,6 +1074,136 @@ namespace VectorMath
 
             // store the result
             _mm_store_ss(pDst, GetSum(sum));
+        }
+
+        // dst = (src1 * val1) + (src2 * val2) + (src3 * val3)
+        _Use_decl_annotations_ void DotProdC_32f(
+            float* pDst, float const* pSrc1, float const* pSrc2, float const* pSrc3, float const val1, float const val2,
+            float const val3, size_t length)
+        {
+            auto idxMax = length / 4;
+            auto const val1Vec = _mm_load_ps1(&val1);
+            auto const val2Vec = _mm_load_ps1(&val2);
+            auto const val3Vec = _mm_load_ps1(&val3);
+
+            for (size_t i = 0; i < idxMax; i++)
+            {
+                auto src1 = _mm_loadu_ps(pSrc1);
+                auto src2 = _mm_loadu_ps(pSrc2);
+                auto src3 = _mm_loadu_ps(pSrc3);
+                pSrc1 += 4;
+                pSrc2 += 4;
+                pSrc3 += 4;
+
+                auto res1 = _mm_mul_ps(src1, val1Vec);
+                auto res2 = _mm_mul_ps(src2, val2Vec);
+                auto res3 = _mm_mul_ps(src3, val3Vec);
+
+                auto res4 = _mm_add_ps(res3, _mm_add_ps(res1, res2));
+                _mm_store_ps(pDst, res4);
+                pDst += 4;
+            }
+
+            for (size_t i = idxMax * 4; i < length; i++)
+            {
+                pDst[i] = (pSrc1[i] * val1) + (pSrc2[i] * val2) + (pSrc3[i] * val3);
+            }
+        }
+
+        // float result = a * (1 - remainder) + b * (remainder);
+        // Or: a + (remainder * (b - a)); // Factor out remainder
+        _Use_decl_annotations_ void Interpolate_32f(
+            _Inout_updates_(length) float* pDst, _In_reads_(length) const float* pSrcA,
+            _In_reads_(length) float const* pSrcB, _In_reads_(length) const float* pSrcR, size_t length)
+        {
+            auto idxMax = length / 4;
+
+            for (size_t i = 0; i < idxMax; i++)
+            {
+                auto a = _mm_loadu_ps(pSrcA + i * 4);
+                auto b = _mm_loadu_ps(pSrcB + i * 4);
+                auto remainder = _mm_loadu_ps(pSrcR + i * 4);
+                auto curDst = _mm_loadu_ps(pDst + i * 4);
+
+                auto result = _mm_add_ps(a, _mm_mul_ps(remainder, _mm_sub_ps(b, a)));
+                _mm_store_ps(pDst + i * 4, result);
+            }
+
+            // Finish remainder
+            for (size_t i = idxMax * 4; i < length; i++)
+            {
+                pDst[i] = pSrcA[i] + (pSrcR[i] * (pSrcB[i] - pSrcA[i]));
+            }
+        }
+
+        /* Find index of max element in vector */
+        _Use_decl_annotations_ uint32_t FindMaxIndex_32f(_In_ float* pSrc, _In_ size_t const length)
+        {
+            if (length == 0)
+            {
+                return 0;
+            }
+            float maxValues[4];
+            float maxIndices[4];
+
+            auto incVec = _mm_set1_ps(4);
+            auto indicesVec = _mm_setr_ps(0, 1, 2, 3);
+            auto maxIndicesVec = indicesVec;
+            auto maxValuesVec = _mm_loadu_ps(pSrc); // Start with 0
+
+            for (size_t i = 4; i < length; i += 4)
+            {
+                // Increment indices
+                indicesVec = _mm_add_ps(indicesVec, incVec);
+
+                auto src = _mm_loadu_ps(pSrc + i);
+
+                // See if we have any new max values
+                auto gt = _mm_cmpgt_ps(src, maxValuesVec);
+
+                // Copy over the indices of new max values
+#ifdef __SSE4_1__ // SSE4 implementation
+                maxIndicesVec = _mm_blendv_ps(maxIndicesVec, indicesVec, gt);
+#else // pre-SSE4 implementation
+                auto maxIndicesMask = _mm_andnot_ps(gt, maxIndicesVec);
+                auto indicesMask = _mm_and_ps(gt, indicesVec);
+                maxIndicesVec = _mm_or_ps(maxIndicesMask, indicesMask);
+#endif
+                // Save the new max values
+                maxValuesVec = _mm_max_ps(src, maxValuesVec);
+            }
+
+            // Find the max in the vectors
+            _mm_storeu_ps(maxValues, maxValuesVec);
+            _mm_storeu_ps(maxIndices, maxIndicesVec);
+
+            // Start with 0
+            auto maxIndex = maxIndices[0];
+            auto maxValue = maxValues[0];
+            for (int i = 1; i < 4; i++)
+            {
+                if (maxValues[i] >= maxValue)
+                {
+                    maxValue = maxValues[i];
+                    maxIndex = maxIndices[i];
+                }
+            }
+
+            // Get the uint version of the float
+            uint32_t finalResult = static_cast<uint32_t>(maxIndex);
+
+            // Deal with residual
+            const uint32_t residualStart = (uint32_t)(length / 4) * 4;
+            for (auto i = residualStart; i < length; i++)
+            {
+                if (pSrc[i] > maxValue)
+                {
+                    maxValue = pSrc[i];
+                    finalResult = i;
+                }
+            }
+
+            return finalResult;
         }
     } // namespace Arithmetic_Sse2
 } // namespace VectorMath
