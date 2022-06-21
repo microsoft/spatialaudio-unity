@@ -80,7 +80,7 @@ If you forget to include submodules when cloning, add them with `git submodule u
     ```
       "dependencies": {
       ...
-      "com.microsoft.spatialaudio.spatializer.unity": "2.0.30-prerelease",
+      "com.microsoft.spatialaudio.spatializer.unity": "2.0.37",
       ...
     }
     ```
