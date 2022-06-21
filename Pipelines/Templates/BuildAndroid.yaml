@@ -17,10 +17,13 @@ parameters:
 
 jobs:
 - job: Android_${{ parameters.jobName }}_${{ parameters.configuration }}
+  continueOnError: false
   pool:
-    name: Analog-1ES-WindowsLatest
     vmImage: 'windows-2019'
-  dependsOn: []
+    Demands:
+    - msbuild
+    - visualstudio
+
   steps:
   - checkout: self
     submodules: true
