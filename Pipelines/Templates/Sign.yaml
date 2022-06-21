@@ -47,7 +47,7 @@ jobs:
     inputs:
       ConnectedServiceName: $(ESRPConnection)
       FolderPath: '$(Pipeline.Workspace)\BuildArtifacts'
-      Pattern: 'AudioPluginMicrosoftSpatializer.dll'
+      Pattern: 'AudioPluginMicrosoftSpatializerCrossPlatform.dll'
       SessionTimeout: 360
       MaxConcurrency: 5
       MaxRetryAttempts: 5
