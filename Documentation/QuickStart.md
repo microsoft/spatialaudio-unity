@@ -1,30 +1,14 @@
 # How to add the plugin to Unity projects
 
-## 1. Add the spatializer package reference to manifest.json
-This is the recommended way to add the plugin package to a project. 
-- Open the `manifest.json` file from the project in a text editor
-- Add Microsoft's scoped registry and the package reference  
-    <pre>
-    {
-        "scopedRegistries": [
-        {
-            "name": "Microsoft Spatializer",
-            "url": "https://microsoft.pkgs.visualstudio.com/Analog/_packaging/MixedReality-UPM-Internal/npm/registry/",
-            "scopes": [
-            "com.microsoft.spatialaudio"
-            ]
-        },
-        ...
-        ],
-        "dependencies": {
-            ...
-            "com.microsoft.spatialaudio.spatializer.unity": "2.0.5-prerelease",
-            ...
-        }
-    }
-    </pre>
+## 1. Add the spatializer package via the Mixed Reality Feature Tool
+- Download the Mixed Reality Feature Tool from https://aka.ms/mrfeaturetool.
+- Select the `Microsoft Spatializer` component from the `Spatial Audio` group and integrate the plugin into your project using the `Get Features` button.
 
-For an example, see the [sample project manifest.](../samples/MicrosoftSpatializerSample/Packages/manifest.json)
+    ![Mixed Reality Feature Tool](./Images/mrfeaturetool.png)
+
+- If you are using the Sample project in the repo, you'll need to import the MRTK packages listed below, in addition to the spatializer plugin:
+
+    ![Mixed Reality Feature Tool with Sample](./Images/SampleUpdateWithMRFeatureTool.png)
 
 The plugin package can also be downloaded from GitHub releases and imported into the project using `Assets > Import Package > Custom Package` menu.  
 
