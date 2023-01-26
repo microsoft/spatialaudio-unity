@@ -4,7 +4,7 @@
 - Download the Mixed Reality Feature Tool from https://aka.ms/mrfeaturetool.
 - Select the `Microsoft Spatializer` component from the `Spatial Audio` group and integrate the plugin into your project using the `Get Features` button.
 
-    ![Mixed Reality Feature Tool](./Images/mrfeaturetool.png)
+    ![Mixed Reality Feature Tool](./Images/MRFeatureTool.png)
 
 - If you are using the Sample project in the repo, you'll need to import the MRTK packages listed below, in addition to the spatializer plugin:
 
