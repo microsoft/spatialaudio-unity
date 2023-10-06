@@ -29,7 +29,7 @@ jobs:
   #     script:
   #       $info = (Get-UnitySetupInstance | Select-UnitySetupInstance -Version $(Unity2020LTSVer)).Path + "\Editor";
   #       Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
-  - script: python tools\unity_package.py -u "C:\Program Files\Unity2020.3.31f1\Editor" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(PackageVersion)
+  - script: python tools\unity_package.py -u "C:\Program Files\Unity2020.3.44f1\Editor" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(PackageVersion)
     displayName: Building Unity Package
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Unity Package to Fileshare'
