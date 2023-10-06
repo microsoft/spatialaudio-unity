@@ -21,6 +21,8 @@ jobs:
       artifactName: 'BuildArtifacts'
       buildType: 'current'
       targetPath: '$(Pipeline.Workspace)'
+  - pwsh: Install-Module UnitySetup -Scope CurrentUser -Force -AllowPrerelease
+    displayName: Install unitysetup.powershell
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
