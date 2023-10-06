@@ -21,15 +21,13 @@ jobs:
       artifactName: 'BuildArtifacts'
       buildType: 'current'
       targetPath: '$(Pipeline.Workspace)'
-  - pwsh: Install-Module UnitySetup -Scope CurrentUser -Force -AllowPrerelease
-    displayName: Install unitysetup.powershell
-  # - task: PowerShell@2
-  #   inputs:
-  #     targetType: 'inline'
-  #     script:
-  #       $info = (Get-UnitySetupInstance | Select-UnitySetupInstance -Version $(Unity2020LTSVer)).Path + "\Editor";
-  #       Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
-  - script: python tools\unity_package.py -u "C:\Program Files\Unity2020.3.44f1\Editor" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(PackageVersion)
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script:
+        $info = "$env:Unity2020LTS" + "\Editor";
+        Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
+  - script: python tools\unity_package.py -u "$(unityLocation)" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(PackageVersion)
     displayName: Building Unity Package
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Unity Package to Fileshare'
