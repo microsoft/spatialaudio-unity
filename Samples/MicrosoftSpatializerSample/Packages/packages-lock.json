@@ -1,58 +1,5 @@
 {
   "dependencies": {
-    "com.microsoft.mixedreality.toolkit.examples": {
-      "version": "2.5.1",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.microsoft.mixedreality.toolkit.foundation": "2.5.1",
-        "com.microsoft.mixedreality.toolkit.extensions": "2.5.1"
-      },
-      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
-    },
-    "com.microsoft.mixedreality.toolkit.extensions": {
-      "version": "2.5.1",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.microsoft.mixedreality.toolkit.foundation": "2.5.1"
-      },
-      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
-    },
-    "com.microsoft.mixedreality.toolkit.foundation": {
-      "version": "2.5.1",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.microsoft.mixedreality.toolkit.standardassets": "2.5.1"
-      },
-      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
-    },
-    "com.microsoft.mixedreality.toolkit.standardassets": {
-      "version": "2.5.1",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.textmeshpro": "2.1.1"
-      },
-      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
-    },
-    "com.microsoft.mixedreality.toolkit.tools": {
-      "version": "2.5.1",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.microsoft.mixedreality.toolkit.foundation": "2.5.1"
-      },
-      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
-    },
-    "com.microsoft.spatialaudio.spatializer.unity": {
-      "version": "2.0.37",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://pkgs.dev.azure.com/aipmr/MixedReality-Unity-Packages/_packaging/Unity-packages/npm/registry"
-    },
     "com.unity.collab-proxy": {
       "version": "1.13.5",
       "depth": 0,
