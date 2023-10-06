@@ -25,7 +25,7 @@ jobs:
     inputs:
       targetType: 'inline'
       script:
-        $info = (Get-UnitySetupInstance | Select-UnitySetupInstance -Version $(Unity2020LTSVer)).Path + "\Editor";
+        $info = "$env:Unity2020LTS" + "\Editor";
         Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
   - script: python tools\unity_package.py -u "$(unityLocation)" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(PackageVersion)
     displayName: Building Unity Package
