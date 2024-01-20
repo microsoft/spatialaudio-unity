@@ -1,10 +1,12 @@
 {
   "name": "com.microsoft.spatialaudio.spatializer.unity",
   "displayName": "Microsoft Spatializer",
-  "version": "%version%",
-  "unity": "2019.4",
+  "version": "2.0.38",
+  "unity": "2021.3",
+  "unityRelease": "26f1",
   "description": "Cross-platform Audio Spatializer for Mixed Reality and Immersive 3D applications",
   "msftFeatureCategory": "Spatial Audio",
+  "documentationUrl": "https://aka.ms/spatial-sound-unity",
   "keywords": [
     "microsoft",
     "mixed",
