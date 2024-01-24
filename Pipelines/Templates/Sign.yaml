@@ -40,6 +40,11 @@ jobs:
       scanType: 'Register'
       verbosity: 'Verbose'
       alertWarningLevel: 'High'
+  - task: UseDotNet@2
+    displayName: 'Ensure .NET Core is present for ESRP code signing'
+    inputs:
+      packageType: 'sdk'
+      version: 2.1.x
   - task: EsrpCodeSigning@1
     displayName: 'CodeSign Binaries'
     env:
