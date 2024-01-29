@@ -33,7 +33,7 @@ jobs:
     displayName: Universal Publish Unity Package
     inputs:
       command: publish
-      publishDirectory: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
+      publishDirectory: '$(Pipeline.Workspace)\unity'
       vstsFeedPublish: $(PackageFeed)
       vstsFeedPackagePublish: 'Microsoft.SpatialAudio.Spatializer.Unity'
       packagePublishDescription: 'Unity Spatializer Plugin with Windows Sonic Support'
