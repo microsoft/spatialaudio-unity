@@ -7,6 +7,7 @@ variables:
     UnityVersion: $(Unity2020LTSVer)
     ProductVersion.Patch: $[counter(variables['ProductMajorMinor'], 0)]
     ProductVersion: $(ProductMajorMinor).$(ProductVersion.Patch)
+    PackageFeed: 'Analog/Microsoft-SpatialAudio-Unity'
     NpmPackageName: 'com.microsoft.spatialaudio.spatializer.unity'
     ${{ if eq(variables['Build.SourceBranchName'], variables['SigningBranch']) }}:
       PackageVersion: $(ProductVersion)
