@@ -4,7 +4,7 @@ All notable changes to this package will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.1.0/).
 
-## [2.0.38] - 2024-01-19
+## [2.0.55] - 2024-01-30
 
 ### Added
 
