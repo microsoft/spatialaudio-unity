@@ -29,14 +29,16 @@ jobs:
         Write-Output "##vso[task.setvariable variable=unityLocation;]$info"
   - script: python tools\unity_package.py -u "$(unityLocation)" -s $(Pipeline.Workspace) -o "$(Pipeline.Workspace)\unity" -v $(PackageVersion)
     displayName: Building Unity Package
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Unity Package to Fileshare'
+  - task: UniversalPackages@0
+    displayName: Universal Publish Internal Unity Spatializer Plugin Package
     inputs:
-      PathtoPublish: '$(Pipeline.Workspace)\unity'
-      ArtifactName: CrossPlatformPluginUnity
-      publishLocation: FilePath
-      TargetPath: '$(InternalFileShare)\$(Build.SourceBranchName)\$(Build.BuildNumber)\'
-      Parallel: true
+      command: publish
+      publishDirectory: '$(Pipeline.Workspace)\unity'
+      vstsFeedPublish: $(PackageFeed)
+      vstsFeedPackagePublish: 'internal.microsoft.spatialaudio.spatializer.unity'
+      packagePublishDescription: 'Internal Unity Spatializer Plugin Package with Windows Sonic Support'
+      versionOption: custom
+      versionPublish: $(PackageVersion)
   - task: NodeTool@0
     displayName: 'Install NPM Tools'
   - task: CmdLine@2
